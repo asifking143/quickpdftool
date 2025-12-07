@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Blindness Simulator | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2c7be5;
+            --secondary-blue: #6ea8fe;
+            --light-blue: #e8f2ff;
+            --dark-blue: #1c5fb8;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #333333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 10px;
+            --success-green: #28a745;
+            --warning-orange: #fd7e14;
+            --protanopia-color: #e74c3c;
+            --deuteranopia-color: #3498db;
+            --tritanopia-color: #9b59b6;
+            --achromatopsia-color: #7f8c8d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        
+        header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .tool-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .tool-title {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 18px 30px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tool-title i {
+            font-size: 1.4rem;
+        }
+        
+        .tool-content {
+            padding: 30px;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 3px dashed var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 50px 30px;
+            text-align: center;
+            background-color: var(--light-blue);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary-blue);
+            background-color: #e1edff;
+        }
+        
+        .upload-area.drag-over {
+            border-color: var(--primary-blue);
+            background-color: #d4e5ff;
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark-blue);
+        }
+        
+        .upload-text p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--dark-blue);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .or-divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--medium-gray);
+        }
+        
+        .or-text {
+            color: var(--dark-gray);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .sample-images {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .sample-image {
+            width: 120px;
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sample-image:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary-blue);
+            box-shadow: var(--shadow);
+        }
+        
+        .sample-image.active {
+            border-color: var(--primary-blue);
+        }
+        
+        .sample-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .simulation-controls {
+            background-color: var(--light-blue);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .controls-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reset-btn {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        .blindness-types {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        @media (max-width: 992px) {
+            .blindness-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .blindness-types {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .type-btn {
+            padding: 15px;
+            background-color: var(--white);
+            border: 2px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .type-btn:hover {
+            border-color: var(--secondary-blue);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .type-btn.active {
+            border-color: var(--primary-blue);
+            background-color: var(--light-blue);
+        }
+        
+        .type-icon {
+            font-size: 1.8rem;
+        }
+        
+        .type-btn.normal .type-icon {
+            color: var(--primary-blue);
+        }
+        
+        .type-btn.protanopia .type-icon {
+            color: var(--protanopia-color);
+        }
+        
+        .type-btn.deuteranopia .type-icon {
+            color: var(--deuteranopia-color);
+        }
+        
+        .type-btn.tritanopia .type-icon {
+            color: var(--tritanopia-color);
+        }
+        
+        .type-btn.achromatopsia .type-icon {
+            color: var(--achromatopsia-color);
+        }
+        
+        .type-name {
+            font-size: 1rem;
+        }
+        
+        .type-desc {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        .images-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .images-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        
+        .image-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .image-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-blue);
+        }
+        
+        .image-preview {
+            height: 350px;
+            border-radius: var(--border-radius);
+            background-color: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .placeholder {
+            text-align: center;
+            color: var(--dark-gray);
+        }
+        
+        .placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--secondary-blue);
+        }
+        
+        .image-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: var(--light-blue);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+        
+        .image-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+        
+        .stat-value {
+            color: var(--dark-gray);
+        }
+        
+        .download-btn {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--dark-blue);
+        }
+        
+        .comparison-section {
+            margin-top: 30px;
+        }
+        
+        .comparison-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+        
+        @media (max-width: 992px) {
+            .comparison-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .comparison-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .comparison-preview {
+            height: 120px;
+            background-color: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .comparison-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        
+        .comparison-info {
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .comparison-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .comparison-type {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        .instructions {
+            background-color: var(--light-blue);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            color: var(--dark-gray);
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .color-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .color-types {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .color-type-info {
+            background-color: var(--white);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+        
+        .color-type-info h4 {
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .color-type-info p {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            line-height: 1.5;
+        }
+        
+        .protanopia h4 {
+            color: var(--protanopia-color);
+        }
+        
+        .deuteranopia h4 {
+            color: var(--deuteranopia-color);
+        }
+        
+        .tritanopia h4 {
+            color: var(--tritanopia-color);
+        }
+        
+        .achromatopsia h4 {
+            color: var(--achromatopsia-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--medium-gray);
+            margin-top: 30px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .tool-title {
+                padding: 15px 20px;
+                font-size: 1.3rem;
+            }
+            
+            .tool-content {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                padding: 30px 20px;
+            }
+            
+            .image-preview {
+                height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .controls-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .reset-btn {
+                align-self: stretch;
+            }
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-blue);
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .image-preview.loading .spinner {
+            display: block;
+        }
+        
+        .image-preview.loading .placeholder,
+        .image-preview.loading img {
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <h1>QuickPDFTool Color Blindness Simulator</h1>
+            </div>
+            <p>Upload an image to simulate how it appears to people with different types of color vision deficiencies.</p>
+        </header>
+        
+        <main>
+            <div class="tool-container">
+                <div class="tool-title">
+                    <i class="fas fa-universal-access"></i>
+                    <span>Color Vision Deficiency Simulator</span>
+                </div>
+                
+                <div class="tool-content">
+                    <div class="upload-section">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="upload-text">
+                                <h3>Upload an Image</h3>
+                                <p>Drag and drop an image file here, or click to browse</p>
+                                <button class="upload-btn" id="uploadBtn">
+                                    <i class="fas fa-folder-open"></i>
+                                    <span>Choose Image</span>
+                                </button>
+                                <input type="file" id="fileInput" class="file-input" accept="image/*">
+                            </div>
+                            
+                            <div class="or-divider">
+                                <span class="or-text">OR</span>
+                            </div>
+                            
+                            <div class="sample-images">
+                                <div class="sample-image active" data-image="color-test">
+                                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90' viewBox='0 0 120 90'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232c7be5'/%3E%3Cstop offset='1' stop-color='%236ea8fe'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='90' fill='url(%23a)'/%3E%3Ccircle cx='30' cy='45' r='20' fill='%23dc3545'/%3E%3Ccircle cx='60' cy='45' r='20' fill='%2328a745'/%3E%3Ccircle cx='90' cy='45' r='20' fill='%23fd7e14'/%3E%3C/svg%3E" alt="Color Test">
+                                </div>
+                                <div class="sample-image" data-image="nature">
+                                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90' viewBox='0 0 120 90'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%2328a745'/%3E%3Cstop offset='1' stop-color='%23168d3a'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232c7be5'/%3E%3Cstop offset='1' stop-color='%231c5fb8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='90' fill='url(%23a)'/%3E%3Ccircle cx='60' cy='30' r='25' fill='%23ffd166'/%3E%3Crect x='0' y='60' width='120' height='30' fill='%238B4513'/%3E%3Crect x='50' y='30' width='20' height='30' fill='%238B4513'/%3E%3Ccircle cx='30' cy='20' r='15' fill='url(%23b)'/%3E%3Ccircle cx='90' cy='25' r='12' fill='url(%23b)'/%3E%3C/svg%3E" alt="Nature Scene">
+                                </div>
+                                <div class="sample-image" data-image="ui-design">
+                                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90' viewBox='0 0 120 90'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232c7be5'/%3E%3Cstop offset='1' stop-color='%236ea8fe'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='90' fill='%23f8f9fa'/%3E%3Crect x='10' y='10' width='100' height='20' rx='5' fill='url(%23a)'/%3E%3Crect x='10' y='40' width='40' height='40' rx='5' fill='%2328a745'/%3E%3Crect x='60' y='40' width='50' height='15' rx='5' fill='%23fd7e14'/%3E%3Crect x='60' y='65' width='30' height='15' rx='5' fill='%23dc3545'/%3E%3C/svg%3E" alt="UI Design">
+                                </div>
+                                <div class="sample-image" data-image="chart">
+                                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90' viewBox='0 0 120 90'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232c7be5'/%3E%3Cstop offset='1' stop-color='%236ea8fe'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='90' fill='%23f8f9fa'/%3E%3Crect x='20' y='50' width='15' height='30' fill='%232c7be5'/%3E%3Crect x='40' y='30' width='15' height='50' fill='%23dc3545'/%3E%3Crect x='60' y='20' width='15' height='60' fill='%2328a745'/%3E%3Crect x='80' y='40' width='15' height='40' fill='%23fd7e14'/%3E%3Cline x1='15' y1='80' x2='105' y2='80' stroke='%23333' stroke-width='1'/%3E%3Cline x1='15' y1='80' x2='15' y2='15' stroke='%23333' stroke-width='1'/%3E%3C/svg%3E" alt="Chart">
+                                </div>
+                            </div>
+                            
+                            <div class="spinner" id="uploadSpinner"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="simulation-controls">
+                        <div class="controls-header">
+                            <div class="controls-title">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>Color Blindness Types</span>
+                            </div>
+                            <button class="reset-btn" id="resetBtn">
+                                <i class="fas fa-redo"></i>
+                                <span>Reset Tool</span>
+                            </button>
+                        </div>
+                        
+                        <div class="blindness-types">
+                            <div class="type-btn normal active" data-type="normal">
+                                <div class="type-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="type-name">Normal Vision</div>
+                                <div class="type-desc">Standard color vision</div>
+                            </div>
+                            
+                            <div class="type-btn protanopia" data-type="protanopia">
+                                <div class="type-icon">
+                                    <i class="fas fa-eye-slash"></i>
+                                </div>
+                                <div class="type-name">Protanopia</div>
+                                <div class="type-desc">Red-green (no red cones)</div>
+                            </div>
+                            
+                            <div class="type-btn deuteranopia" data-type="deuteranopia">
+                                <div class="type-icon">
+                                    <i class="fas fa-low-vision"></i>
+                                </div>
+                                <div class="type-name">Deuteranopia</div>
+                                <div class="type-desc">Red-green (no green cones)</div>
+                            </div>
+                            
+                            <div class="type-btn tritanopia" data-type="tritanopia">
+                                <div class="type-icon">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                                <div class="type-name">Tritanopia</div>
+                                <div class="type-desc">Blue-yellow deficiency</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="images-container">
+                        <div class="image-box">
+                            <div class="image-title">
+                                <i class="fas fa-image"></i>
+                                <span>Original Image</span>
+                            </div>
+                            <div class="image-preview" id="originalPreview">
+                                <div class="placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <p>Original image will appear here</p>
+                                </div>
+                                <img id="originalImage" alt="Original Image">
+                                <div class="spinner" id="originalSpinner"></div>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-stats">
+                                    <div class="stat">
+                                        <div class="stat-label">Type:</div>
+                                        <div class="stat-value" id="originalType">-</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-label">Size:</div>
+                                        <div class="stat-value" id="originalSize">-</div>
+                                    </div>
+                                </div>
+                                <button class="download-btn" id="downloadOriginalBtn" disabled>
+                                    <i class="fas fa-download"></i>
+                                    <span>Download</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="image-box">
+                            <div class="image-title">
+                                <i class="fas fa-eye-slash"></i>
+                                <span>Simulated Image</span>
+                            </div>
+                            <div class="image-preview" id="simulatedPreview">
+                                <div class="placeholder">
+                                    <i class="fas fa-low-vision"></i>
+                                    <p>Simulated image will appear here</p>
+                                </div>
+                                <canvas id="simulatedCanvas"></canvas>
+                                <img id="simulatedImage" alt="Simulated Image">
+                                <div class="spinner" id="simulatedSpinner"></div>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-stats">
+                                    <div class="stat">
+                                        <div class="stat-label">Type:</div>
+                                        <div class="stat-value" id="simulatedType">-</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-label">Simulation:</div>
+                                        <div class="stat-value" id="simulationType">None</div>
+                                    </div>
+                                </div>
+                                <button class="download-btn" id="downloadSimulatedBtn" disabled>
+                                    <i class="fas fa-download"></i>
+                                    <span>Download</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <div class="comparison-title">
+                            <i class="fas fa-columns"></i>
+                            <span>Quick Comparison</span>
+                        </div>
+                        <div class="comparison-container" id="comparisonContainer">
+                            <!-- Comparison items will be dynamically added here -->
+                            <div class="comparison-item">
+                                <div class="comparison-preview">
+                                    <div class="placeholder">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                </div>
+                                <div class="comparison-info">
+                                    <div class="comparison-name">Upload an image</div>
+                                    <div class="comparison-type">to see comparisons</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> About Color Vision Deficiencies</h3>
+                <div class="color-types">
+                    <div class="color-type-info protanopia">
+                        <h4><i class="fas fa-eye-slash"></i> Protanopia</h4>
+                        <p>Affects the red cones in the eye. People with protanopia have difficulty distinguishing between red and green colors. Reds appear darker and may look black or brown.</p>
+                    </div>
+                    
+                    <div class="color-type-info deuteranopia">
+                        <h4><i class="fas fa-low-vision"></i> Deuteranopia</h4>
+                        <p>Affects the green cones in the eye. Similar to protanopia but greens appear lighter. This is the most common type of color blindness, affecting about 6% of males.</p>
+                    </div>
+                    
+                    <div class="color-type-info tritanopia">
+                        <h4><i class="fas fa-tint"></i> Tritanopia</h4>
+                        <p>Affects the blue cones in the eye. People with tritanopia have difficulty distinguishing between blue and yellow colors. Blues appear greener and yellows may appear violet.</p>
+                    </div>
+                    
+                    <div class="color-type-info achromatopsia">
+                        <h4><i class="fas fa-adjust"></i> Achromatopsia</h4>
+                        <p>Complete color blindness, where people see only in shades of gray. This is a rare condition affecting all three types of cones in the eye.</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px;"><i class="fas fa-lightbulb"></i> Design Tips for Accessibility</h3>
+                <ul>
+                    <li>Use both color and patterns/symbols to convey information in charts and graphs</li>
+                    <li>Ensure text has sufficient contrast against background colors (4.5:1 ratio minimum)</li>
+                    <li>Avoid color combinations that are problematic for colorblind users (red-green, blue-purple)</li>
+                    <li>Test your designs with tools like this simulator to ensure accessibility</li>
+                    <li>Provide text labels or alternative indicators for color-coded information</li>
+                </ul>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Color Blindness Simulator Tool &copy; <span id="currentYear"></span> QuickPDFTool. Based on research into color vision deficiencies.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const sampleImages = document.querySelectorAll('.sample-image');
+        const originalPreview = document.getElementById('originalPreview');
+        const originalImage = document.getElementById('originalImage');
+        const originalSpinner = document.getElementById('originalSpinner');
+        const simulatedPreview = document.getElementById('simulatedPreview');
+        const simulatedCanvas = document.getElementById('simulatedCanvas');
+        const simulatedImage = document.getElementById('simulatedImage');
+        const simulatedSpinner = document.getElementById('simulatedSpinner');
+        const typeButtons = document.querySelectorAll('.type-btn');
+        const resetBtn = document.getElementById('resetBtn');
+        const originalType = document.getElementById('originalType');
+        const originalSize = document.getElementById('originalSize');
+        const simulatedType = document.getElementById('simulatedType');
+        const simulationType = document.getElementById('simulationType');
+        const downloadOriginalBtn = document.getElementById('downloadOriginalBtn');
+        const downloadSimulatedBtn = document.getElementById('downloadSimulatedBtn');
+        const comparisonContainer = document.getElementById('comparisonContainer');
+        const uploadSpinner = document.getElementById('uploadSpinner');
+        
+        // Current state
+        let currentImage = null;
+        let currentImageName = 'color-test';
+        let currentBlindnessType = 'normal';
+        let imageLoaded = false;
+        
+        // Sample images data URLs (simplified versions for demonstration)
+        const sampleImageData = {
+            'color-test': 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\' viewBox=\'0 0 800 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'a\' x1=\'0\' x2=\'0\' y1=\'0\' y2=\'1\'%3E%3Cstop offset=\'0\' stop-color=\'%232c7be5\'/%3E%3Cstop offset=\'1\' stop-color=\'%236ea8fe\'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'800\' height=\'600\' fill=\'url(%23a)\'/%3E%3Ccircle cx=\'200\' cy=\'300\' r=\'100\' fill=\'%23dc3545\'/%3E%3Ccircle cx=\'400\' cy=\'300\' r=\'100\' fill=\'%2328a745\'/%3E%3Ccircle cx=\'600\' cy=\'300\' r=\'100\' fill=\'%23fd7e14\'/%3E%3C/svg%3E',
+            'nature': 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\' viewBox=\'0 0 800 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'a\' x1=\'0\' x2=\'0\' y1=\'0\' y2=\'1\'%3E%3Cstop offset=\'0\' stop-color=\'%2328a745\'/%3E%3Cstop offset=\'1\' stop-color=\'%23168d3a\'/%3E%3C/linearGradient%3E%3ClinearGradient id=\'b\' x1=\'0\' x2=\'0\' y1=\'0\' y2=\'1\'%3E%3Cstop offset=\'0\' stop-color=\'%232c7be5\'/%3E%3Cstop offset=\'1\' stop-color=\'%231c5fb8\'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'800\' height=\'600\' fill=\'url(%23a)\'/%3E%3Ccircle cx=\'400\' cy=\'200\' r=\'80\' fill=\'%23ffd166\'/%3E%3Crect x=\'0\' y=\'400\' width=\'800\' height=\'200\' fill=\'%238B4513\'/%3E%3Crect x=\'350\' y=\'200\' width=\'100\' height=\'200\' fill=\'%238B4513\'/%3E%3Ccircle cx=\'200\' cy=\'150\' r=\'60\' fill=\'url(%23b)\'/%3E%3Ccircle cx=\'600\' cy=\'180\' r=\'50\' fill=\'url(%23b)\'/%3E%3C/svg%3E',
+            'ui-design': 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\' viewBox=\'0 0 800 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'a\' x1=\'0\' x2=\'0\' y1=\'0\' y2=\'1\'%3E%3Cstop offset=\'0\' stop-color=\'%232c7be5\'/%3E%3Cstop offset=\'1\' stop-color=\'%236ea8fe\'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'800\' height=\'600\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'100\' y=\'80\' width=\'600\' height=\'80\' rx=\'10\' fill=\'url(%23a)\'/%3E%3Crect x=\'100\' y=\'250\' width=\'250\' height=\'250\' rx=\'10\' fill=\'%2328a745\'/%3E%3Crect x=\'400\' y=\'250\' width=\'300\' height=\'80\' rx=\'10\' fill=\'%23fd7e14\'/%3E%3Crect x=\'400\' y=\'400\' width=\'200\' height=\'100\' rx=\'10\' fill=\'%23dc3545\'/%3E%3C/svg%3E',
+            'chart': 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\' viewBox=\'0 0 800 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'a\' x1=\'0\' x2=\'0\' y1=\'0\' y2=\'1\'%3E%3Cstop offset=\'0\' stop-color=\'%232c7be5\'/%3E%3Cstop offset=\'1\' stop-color=\'%236ea8fe\'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'800\' height=\'600\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'150\' y=\'350\' width=\'80\' height=\'200\' fill=\'%232c7be5\'/%3E%3Crect x=\'280\' y=\'200\' width=\'80\' height=\'350\' fill=\'%23dc3545\'/%3E%3Crect x=\'410\' y=\'150\' width=\'80\' height=\'400\' fill=\'%2328a745\'/%3E%3Crect x=\'540\' y=\'250\' width=\'80\' height=\'300\' fill=\'%23fd7e14\'/%3E%3Cline x1=\'100\' y1=\'550\' x2=\'700\' y2=\'550\' stroke=\'%23333\' stroke-width=\'2\'/%3E%3Cline x1=\'100\' y1=\'550\' x2=\'100\' y2=\'100\' stroke=\'%23333\' stroke-width=\'2\'/%3E%3C/svg%3E'
+        };
+        
+        // Color transformation matrices for different color blindness types
+        const colorMatrices = {
+            normal: [
+                1, 0, 0, 0, 0,
+                0, 1, 0, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 0, 1, 0
+            ],
+            protanopia: [
+                0.567, 0.433, 0, 0, 0,
+                0.558, 0.442, 0, 0, 0,
+                0, 0.242, 0.758, 0, 0,
+                0, 0, 0, 1, 0
+            ],
+            deuteranopia: [
+                0.625, 0.375, 0, 0, 0,
+                0.7, 0.3, 0, 0, 0,
+                0, 0.3, 0.7, 0, 0,
+                0, 0, 0, 1, 0
+            ],
+            tritanopia: [
+                0.95, 0.05, 0, 0, 0,
+                0, 0.433, 0.567, 0, 0,
+                0, 0.475, 0.525, 0, 0,
+                0, 0, 0, 1, 0
+            ],
+            achromatopsia: [
+                0.299, 0.587, 0.114, 0, 0,
+                0.299, 0.587, 0.114, 0, 0,
+                0.299, 0.587, 0.114, 0, 0,
+                0, 0, 0, 1, 0
+            ]
+        };
+        
+        // Initialize the tool
+        function init() {
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Load default sample image
+            loadSampleImage('color-test');
+        }
+        
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Upload button click
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // Drag and drop events
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileUpload({ target: { files: e.dataTransfer.files } });
+                }
+            });
+            
+            // Sample image clicks
+            sampleImages.forEach(image => {
+                image.addEventListener('click', () => {
+                    // Update active sample image
+                    sampleImages.forEach(img => img.classList.remove('active'));
+                    image.classList.add('active');
+                    
+                    // Load the selected sample image
+                    const imageName = image.getAttribute('data-image');
+                    loadSampleImage(imageName);
+                });
+            });
+            
+            // Color blindness type buttons
+            typeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Update simulation type
+                    const type = button.getAttribute('data-type');
+                    currentBlindnessType = type;
+                    simulationType.textContent = getTypeDisplayName(type);
+                    
+                    // Apply simulation if image is loaded
+                    if (imageLoaded) {
+                        applyColorBlindnessSimulation();
+                    }
+                });
+            });
+            
+            // Reset button
+            resetBtn.addEventListener('click', resetTool);
+            
+            // Download buttons
+            downloadOriginalBtn.addEventListener('click', downloadOriginalImage);
+            downloadSimulatedBtn.addEventListener('click', downloadSimulatedImage);
+        }
+        
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !file.type.match('image.*')) {
+                alert('Please select a valid image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // Show loading spinner
+            showLoading(true);
+            
+            // Update sample images (none active when uploading custom image)
+            sampleImages.forEach(img => img.classList.remove('active'));
+            
+            // Read the file
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                loadImageFromData(e.target.result, file.name, file.size);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Load a sample image
+        function loadSampleImage(imageName) {
+            // Show loading spinner
+            showLoading(true);
+            
+            // Update current image name
+            currentImageName = imageName;
+            
+            // Load the image
+            loadImageFromData(sampleImageData[imageName], `sample-${imageName}.svg`, 0);
+        }
+        
+        // Load image from data URL
+        function loadImageFromData(dataUrl, fileName, fileSize) {
+            // Create a new image element
+            const img = new Image();
+            img.onload = () => {
+                // Set current image
+                currentImage = img;
+                imageLoaded = true;
+                
+                // Display original image
+                displayOriginalImage(img, fileName, fileSize);
+                
+                // Apply initial simulation
+                applyColorBlindnessSimulation();
+                
+                // Update comparison view
+                updateComparisonView();
+                
+                // Hide loading spinner
+                showLoading(false);
+            };
+            img.onerror = () => {
+                alert('Failed to load image. Please try another image.');
+                showLoading(false);
+            };
+            img.src = dataUrl;
+        }
+        
+        // Display original image
+        function displayOriginalImage(img, fileName, fileSize) {
+            // Set image source
+            originalImage.src = img.src;
+            originalImage.style.display = 'block';
+            
+            // Update image info
+            originalType.textContent = fileName.split('.').pop().toUpperCase();
+            originalSize.textContent = fileSize > 0 ? formatFileSize(fileSize) : 'Sample Image';
+            
+            // Enable download button
+            downloadOriginalBtn.disabled = false;
+        }
+        
+        // Apply color blindness simulation
+        function applyColorBlindnessSimulation() {
+            if (!imageLoaded || !currentImage) return;
+            
+            // Show loading spinner for simulated image
+            simulatedPreview.classList.add('loading');
+            
+            // Use setTimeout to allow UI to update before heavy processing
+            setTimeout(() => {
+                // Get canvas context
+                const canvas = simulatedCanvas;
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions to match image
+                canvas.width = currentImage.width;
+                canvas.height = currentImage.height;
+                
+                // Draw original image on canvas
+                ctx.drawImage(currentImage, 0, 0);
+                
+                // Get image data
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Apply color transformation
+                const matrix = colorMatrices[currentBlindnessType];
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    // Apply matrix transformation
+                    data[i] = r * matrix[0] + g * matrix[1] + b * matrix[2] + matrix[3] * 255;
+                    data[i + 1] = r * matrix[5] + g * matrix[6] + b * matrix[7] + matrix[8] * 255;
+                    data[i + 2] = r * matrix[10] + g * matrix[11] + b * matrix[12] + matrix[13] * 255;
+                }
+                
+                // Put transformed data back to canvas
+                ctx.putImageData(imageData, 0, 0);
+                
+                // Convert canvas to data URL for display
+                const simulatedDataUrl = canvas.toDataURL('image/png');
+                simulatedImage.src = simulatedDataUrl;
+                simulatedImage.style.display = 'block';
+                
+                // Update simulated image info
+                simulatedType.textContent = originalType.textContent;
+                simulationType.textContent = getTypeDisplayName(currentBlindnessType);
+                
+                // Enable download button
+                downloadSimulatedBtn.disabled = false;
+                
+                // Hide loading spinner
+                simulatedPreview.classList.remove('loading');
+                
+                // Update comparison view
+                updateComparisonView();
+            }, 50);
+        }
+        
+        // Get display name for color blindness type
+        function getTypeDisplayName(type) {
+            const names = {
+                'normal': 'Normal Vision',
+                'protanopia': 'Protanopia',
+                'deuteranopia': 'Deuteranopia',
+                'tritanopia': 'Tritanopia',
+                'achromatopsia': 'Achromatopsia'
+            };
+            return names[type] || type;
+        }
+        
+        // Update comparison view with all simulations
+        function updateComparisonView() {
+            if (!imageLoaded) return;
+            
+            // Clear comparison container
+            comparisonContainer.innerHTML = '';
+            
+            // Create comparison items for each color blindness type
+            Object.keys(colorMatrices).forEach(type => {
+                // Skip if we don't have a display name
+                if (!getTypeDisplayName(type)) return;
+                
+                // Create comparison item
+                const item = document.createElement('div');
+                item.className = 'comparison-item';
+                item.setAttribute('data-type', type);
+                
+                // Create preview canvas
+                const previewCanvas = document.createElement('canvas');
+                const previewCtx = previewCanvas.getContext('2d');
+                
+                // Set canvas dimensions (smaller for preview)
+                previewCanvas.width = 200;
+                previewCanvas.height = 150;
+                
+                // Draw and transform image
+                previewCtx.drawImage(currentImage, 0, 0, 200, 150);
+                
+                const imageData = previewCtx.getImageData(0, 0, 200, 150);
+                const data = imageData.data;
+                const matrix = colorMatrices[type];
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    data[i] = r * matrix[0] + g * matrix[1] + b * matrix[2] + matrix[3] * 255;
+                    data[i + 1] = r * matrix[5] + g * matrix[6] + b * matrix[7] + matrix[8] * 255;
+                    data[i + 2] = r * matrix[10] + g * matrix[11] + b * matrix[12] + matrix[13] * 255;
+                }
+                
+                previewCtx.putImageData(imageData, 0, 0);
+                
+                // Convert to data URL for img src
+                const previewDataUrl = previewCanvas.toDataURL('image/png');
+                
+                item.innerHTML = `
+                    <div class="comparison-preview">
+                        <img src="${previewDataUrl}" alt="${getTypeDisplayName(type)}">
+                    </div>
+                    <div class="comparison-info">
+                        <div class="comparison-name">${getTypeDisplayName(type)}</div>
+                        <div class="comparison-type">${type === 'normal' ? 'Original' : 'Simulated'}</div>
+                    </div>
+                `;
+                
+                // Add click event to switch to this type
+                item.addEventListener('click', () => {
+                    // Update active type button
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    const typeButton = document.querySelector(`.type-btn[data-type="${type}"]`);
+                    if (typeButton) typeButton.classList.add('active');
+                    
+                    // Update simulation
+                    currentBlindnessType = type;
+                    simulationType.textContent = getTypeDisplayName(type);
+                    applyColorBlindnessSimulation();
+                });
+                
+                comparisonContainer.appendChild(item);
+            });
+        }
+        
+        // Show/hide loading spinner
+        function showLoading(show) {
+            if (show) {
+                uploadArea.classList.add('loading');
+                originalPreview.classList.add('loading');
+                simulatedPreview.classList.add('loading');
+            } else {
+                uploadArea.classList.remove('loading');
+                originalPreview.classList.remove('loading');
+                simulatedPreview.classList.remove('loading');
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Download original image
+        function downloadOriginalImage() {
+            if (!imageLoaded) return;
+            
+            const link = document.createElement('a');
+            link.download = `original-${currentImageName || 'image'}.png`;
+            link.href = currentImage.src;
+            link.click();
+        }
+        
+        // Download simulated image
+        function downloadSimulatedImage() {
+            if (!imageLoaded) return;
+            
+            const link = document.createElement('a');
+            link.download = `simulated-${currentBlindnessType}-${currentImageName || 'image'}.png`;
+            link.href = simulatedCanvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Reset tool to initial state
+        function resetTool() {
+            // Reset to default sample image
+            sampleImages.forEach(img => img.classList.remove('active'));
+            sampleImages[0].classList.add('active');
+            
+            // Reset to normal vision
+            typeButtons.forEach(btn => btn.classList.remove('active'));
+            typeButtons[0].classList.add('active');
+            
+            // Reset current state
+            currentBlindnessType = 'normal';
+            simulationType.textContent = 'None';
+            
+            // Reload default sample image
+            loadSampleImage('color-test');
+            
+            // Clear file input
+            fileInput.value = '';
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

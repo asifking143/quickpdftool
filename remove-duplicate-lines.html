@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Duplicate Lines | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --light-blue: #4d94ff;
+            --lighter-blue: #e6f0ff;
+            --dark-blue: #0052cc;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5eb;
+            --dark-gray: #666666;
+            --shadow: rgba(0, 102, 255, 0.15);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .input-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-input-container {
+            margin-bottom: 25px;
+        }
+
+        .text-input-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .line-count-label {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            background-color: var(--lighter-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--medium-gray);
+            transition: border-color 0.3s ease;
+        }
+
+        .textarea-wrapper:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 350px;
+            padding: 20px;
+            border: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        .textarea-header {
+            background-color: var(--lighter-blue);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .textarea-header span {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 140px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+        }
+
+        .action-button.secondary:hover {
+            background-color: var(--medium-gray);
+        }
+
+        .action-button.success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .action-button.success:hover {
+            background-color: #0da271;
+        }
+
+        .example-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+        }
+
+        .example-section h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-text {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--dark-gray);
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .options-section {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+        }
+
+        .options-section h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-blue);
+        }
+
+        .option-checkbox label {
+            font-size: 0.95rem;
+            color: var(--dark-gray);
+            cursor: pointer;
+        }
+
+        .results-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .results-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-container {
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 30px;
+            border: 2px solid var(--light-blue);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .results-header {
+            background-color: var(--light-blue);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 13px 13px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .result-text {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 13px 13px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            min-height: 300px;
+        }
+
+        .stats-section {
+            margin-top: 30px;
+        }
+
+        .stats-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .stat-card.removed {
+            border-left-color: var(--warning-orange);
+        }
+
+        .stat-card.unique {
+            border-left-color: var(--success-green);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .stat-card.removed .stat-value {
+            color: var(--warning-orange);
+        }
+
+        .stat-card.unique .stat-value {
+            color: var(--success-green);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .stat-description {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .visualization-section {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+        }
+
+        .visualization-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .visualization-bars {
+            display: flex;
+            height: 100px;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .bar {
+            width: 100%;
+            background-color: var(--primary-blue);
+            border-radius: 6px 6px 0 0;
+            transition: height 1s ease;
+            min-height: 10px;
+        }
+
+        .bar.removed {
+            background-color: var(--warning-orange);
+        }
+
+        .bar-label {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .bar-percentage {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+            margin-top: 5px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-section, .results-section {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section, .results-section {
+                padding: 25px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+            
+            textarea, .result-text {
+                min-height: 250px;
+            }
+            
+            .visualization-bars {
+                flex-direction: column;
+                height: auto;
+                gap: 15px;
+            }
+            
+            .bar-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+                height: auto;
+            }
+            
+            .bar {
+                height: 40px;
+                width: 100%;
+                border-radius: 6px;
+            }
+            
+            .bar-label, .bar-percentage {
+                margin-top: 0;
+                min-width: 100px;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-section, .results-section {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .results-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-indicator .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--lighter-blue);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-button {
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preset-button:hover {
+            background-color: var(--light-blue);
+            color: white;
+            border-color: var(--light-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-filter"></i> Remove Duplicate Lines</h1>
+        <p>Quickly remove duplicate lines from your text while keeping the first occurrence of each unique line. Perfect for cleaning lists, data sets, or any text with repeated lines.</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="input-section">
+            <h2><i class="fas fa-edit"></i> Input Text</h2>
+            
+            <div class="text-input-container">
+                <label>
+                    Paste or type your text with duplicate lines
+                    <span class="line-count-label" id="lineCountLabel">0 lines</span>
+                </label>
+                <div class="textarea-wrapper">
+                    <div class="textarea-header">
+                        <span>Original Text</span>
+                        <span id="duplicateCountLabel">0 duplicates</span>
+                    </div>
+                    <textarea id="inputText" placeholder="Paste your text with duplicate lines here...">Apple
+Banana
+Apple
+Orange
+Banana
+Grape
+Apple
+Orange
+Mango
+Banana
+Apple
+Peach
+Orange
+Grape
+Mango</textarea>
+                </div>
+            </div>
+            
+            <div class="options-section">
+                <h4><i class="fas fa-cog"></i> Processing Options</h4>
+                <div class="options-grid">
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="trimLines" checked>
+                        <label for="trimLines">Trim whitespace from lines</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="caseSensitive">
+                        <label for="caseSensitive">Case-sensitive comparison</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="ignoreEmpty" checked>
+                        <label for="ignoreEmpty">Ignore empty lines</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="preserveOrder" checked>
+                        <label for="preserveOrder">Preserve original order</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example-section">
+                <h4><i class="fas fa-lightbulb"></i> Example Input</h4>
+                <p style="color: var(--dark-gray); font-size: 0.95rem; margin-bottom: 10px;">This example has duplicate fruit names. After processing, each fruit will appear only once.</p>
+                <div class="preset-buttons">
+                    <button class="preset-button" data-preset="emails">Email List</button>
+                    <button class="preset-button" data-preset="urls">URL List</button>
+                    <button class="preset-button" data-preset="names">Name List</button>
+                    <button class="preset-button" data-preset="clear">Clear Text</button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button primary" id="removeButton">
+                    <i class="fas fa-filter"></i> Remove Duplicates
+                </button>
+                <button class="action-button secondary" id="clearButton">
+                    <i class="fas fa-eraser"></i> Clear All
+                </button>
+                <button class="action-button success" id="pasteButton">
+                    <i class="fas fa-paste"></i> Paste Text
+                </button>
+            </div>
+            
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Processing your text...</p>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2><i class="fas fa-file-alt"></i> Results</h2>
+            
+            <div class="results-container">
+                <div class="results-header">
+                    <div class="results-title">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Unique Lines Only</span>
+                    </div>
+                    <div class="results-stats">
+                        <div class="stat-badge" id="uniqueLinesCount">0 lines</div>
+                        <div class="stat-badge" id="removedLinesCount">0 removed</div>
+                    </div>
+                </div>
+                <div class="result-text" id="outputText">
+Apple
+Banana
+Orange
+Grape
+Mango
+Peach
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="originalLinesCount">0</div>
+                        <div class="stat-label">Original Lines</div>
+                        <div class="stat-description">Total lines in input</div>
+                    </div>
+                    
+                    <div class="stat-card unique">
+                        <div class="stat-value" id="uniqueCount">0</div>
+                        <div class="stat-label">Unique Lines</div>
+                        <div class="stat-description">Lines after removing duplicates</div>
+                    </div>
+                    
+                    <div class="stat-card removed">
+                        <div class="stat-value" id="duplicatesRemovedCount">0</div>
+                        <div class="stat-label">Duplicates Removed</div>
+                        <div class="stat-description">Total duplicate lines found</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value" id="reductionPercent">0%</div>
+                        <div class="stat-label">Reduction</div>
+                        <div class="stat-description">Percentage of lines removed</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualization-section">
+                <h3><i class="fas fa-chart-pie"></i> Line Distribution</h3>
+                <div class="visualization-bars">
+                    <div class="bar-container">
+                        <div class="bar" id="originalBar" style="height: 100%;"></div>
+                        <div>
+                            <div class="bar-label">Original</div>
+                            <div class="bar-percentage" id="originalPercent">100%</div>
+                        </div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar removed" id="removedBar" style="height: 0%;"></div>
+                        <div>
+                            <div class="bar-label">Removed</div>
+                            <div class="bar-percentage" id="removedPercent">0%</div>
+                        </div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar unique" id="uniqueBar" style="height: 100%;"></div>
+                        <div>
+                            <div class="bar-label">Unique</div>
+                            <div class="bar-percentage" id="uniquePercent">100%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-button success" id="copyButton">
+                    <i class="far fa-copy"></i> Copy Results
+                </button>
+                <button class="action-button secondary" id="downloadButton">
+                    <i class="fas fa-download"></i> Download Results
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><i class="fas fa-filter"></i> Remove Duplicate Lines Tool - Part of QuickPDFTool | © 2023 All Rights Reserved</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">All text processing happens locally in your browser. Your text is never sent to any server.</p>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Duplicates removed successfully!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const lineCountLabel = document.getElementById('lineCountLabel');
+        const duplicateCountLabel = document.getElementById('duplicateCountLabel');
+        
+        const originalLinesCount = document.getElementById('originalLinesCount');
+        const uniqueCount = document.getElementById('uniqueCount');
+        const duplicatesRemovedCount = document.getElementById('duplicatesRemovedCount');
+        const reductionPercent = document.getElementById('reductionPercent');
+        const uniqueLinesCount = document.getElementById('uniqueLinesCount');
+        const removedLinesCount = document.getElementById('removedLinesCount');
+        
+        // Option checkboxes
+        const trimLinesCheckbox = document.getElementById('trimLines');
+        const caseSensitiveCheckbox = document.getElementById('caseSensitive');
+        const ignoreEmptyCheckbox = document.getElementById('ignoreEmpty');
+        const preserveOrderCheckbox = document.getElementById('preserveOrder');
+        
+        // Buttons
+        const removeButton = document.getElementById('removeButton');
+        const clearButton = document.getElementById('clearButton');
+        const pasteButton = document.getElementById('pasteButton');
+        const copyButton = document.getElementById('copyButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const presetButtons = document.querySelectorAll('.preset-button');
+        
+        // Visualization elements
+        const originalBar = document.getElementById('originalBar');
+        const removedBar = document.getElementById('removedBar');
+        const uniqueBar = document.getElementById('uniqueBar');
+        const originalPercent = document.getElementById('originalPercent');
+        const removedPercent = document.getElementById('removedPercent');
+        const uniquePercent = document.getElementById('uniquePercent');
+        
+        // Notification
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // Update line count label
+        function updateLineCountLabel() {
+            const text = inputText.value;
+            const lines = text.split('\n');
+            lineCountLabel.textContent = `${lines.length} line${lines.length !== 1 ? 's' : ''}`;
+        }
+        
+        // Count duplicates in the text
+        function countDuplicates(text) {
+            if (!text.trim()) {
+                duplicateCountLabel.textContent = "0 duplicates";
+                return 0;
+            }
+            
+            const options = getProcessingOptions();
+            const lines = text.split('\n');
+            const seen = new Set();
+            let duplicateCount = 0;
+            
+            for (let line of lines) {
+                // Apply processing options
+                let processedLine = line;
+                if (options.trimLines) processedLine = processedLine.trim();
+                if (options.ignoreEmpty && processedLine === '') continue;
+                if (!options.caseSensitive) processedLine = processedLine.toLowerCase();
+                
+                if (processedLine !== '') {
+                    if (seen.has(processedLine)) {
+                        duplicateCount++;
+                    } else {
+                        seen.add(processedLine);
+                    }
+                }
+            }
+            
+            duplicateCountLabel.textContent = `${duplicateCount} duplicate${duplicateCount !== 1 ? 's' : ''}`;
+            return duplicateCount;
+        }
+        
+        // Get processing options from checkboxes
+        function getProcessingOptions() {
+            return {
+                trimLines: trimLinesCheckbox.checked,
+                caseSensitive: caseSensitiveCheckbox.checked,
+                ignoreEmpty: ignoreEmptyCheckbox.checked,
+                preserveOrder: preserveOrderCheckbox.checked
+            };
+        }
+        
+        // Remove duplicate lines
+        function removeDuplicateLines() {
+            const text = inputText.value;
+            const options = getProcessingOptions();
+            
+            if (!text.trim()) {
+                outputText.textContent = '';
+                updateStatistics(0, 0, 0);
+                showNotification("No text to process!");
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Simulate processing delay for visual feedback
+            setTimeout(() => {
+                const lines = text.split('\n');
+                const uniqueLines = [];
+                const seen = new Set();
+                
+                let originalCount = 0;
+                let processedCount = 0;
+                
+                for (let line of lines) {
+                    originalCount++;
+                    
+                    // Apply processing options
+                    let processedLine = line;
+                    if (options.trimLines) processedLine = processedLine.trim();
+                    if (options.ignoreEmpty && processedLine === '') continue;
+                    
+                    const compareLine = options.caseSensitive ? processedLine : processedLine.toLowerCase();
+                    
+                    if (!seen.has(compareLine)) {
+                        seen.add(compareLine);
+                        // Keep the original line (not the trimmed version for display)
+                        uniqueLines.push(options.trimLines && line.trim() !== '' ? line.trim() : line);
+                        processedCount++;
+                    }
+                }
+                
+                // If not preserving order, we could sort here, but we're preserving by default
+                const result = uniqueLines.join('\n');
+                outputText.textContent = result;
+                
+                // Update statistics
+                const duplicateCount = originalCount - processedCount;
+                updateStatistics(originalCount, processedCount, duplicateCount);
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                
+                showNotification(`Removed ${duplicateCount} duplicate line${duplicateCount !== 1 ? 's' : ''}!`);
+            }, 300);
+        }
+        
+        // Update statistics and visualization
+        function updateStatistics(original, unique, removed) {
+            // Update counts
+            originalLinesCount.textContent = original.toLocaleString();
+            uniqueCount.textContent = unique.toLocaleString();
+            duplicatesRemovedCount.textContent = removed.toLocaleString();
+            
+            uniqueLinesCount.textContent = `${unique} line${unique !== 1 ? 's' : ''}`;
+            removedLinesCount.textContent = `${removed} removed`;
+            
+            // Calculate reduction percentage
+            const reduction = original > 0 ? Math.round((removed / original) * 100) : 0;
+            reductionPercent.textContent = `${reduction}%`;
+            
+            // Update visualization bars
+            const originalHeight = 100;
+            const removedHeight = original > 0 ? (removed / original) * 100 : 0;
+            const uniqueHeight = original > 0 ? (unique / original) * 100 : 0;
+            
+            originalBar.style.height = `${originalHeight}%`;
+            removedBar.style.height = `${removedHeight}%`;
+            uniqueBar.style.height = `${uniqueHeight}%`;
+            
+            originalPercent.textContent = "100%";
+            removedPercent.textContent = `${removedHeight.toFixed(1)}%`;
+            uniquePercent.textContent = `${uniqueHeight.toFixed(1)}%`;
+        }
+        
+        // Clear all text
+        function clearAllText() {
+            inputText.value = '';
+            outputText.textContent = '';
+            updateLineCountLabel();
+            countDuplicates('');
+            updateStatistics(0, 0, 0);
+            showNotification("All text cleared!");
+            
+            // Focus back on the textarea
+            inputText.focus();
+        }
+        
+        // Paste text from clipboard
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputText.value = text;
+                updateLineCountLabel();
+                countDuplicates(text);
+                removeDuplicateLines();
+                showNotification("Text pasted from clipboard!");
+            } catch (err) {
+                showNotification("Unable to paste. Please paste manually.");
+                console.error('Failed to paste: ', err);
+            }
+        }
+        
+        // Copy results to clipboard
+        async function copyResultsToClipboard() {
+            const text = outputText.textContent;
+            
+            if (!text.trim()) {
+                showNotification("No results to copy!");
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification("Results copied to clipboard!");
+            } catch (err) {
+                showNotification("Failed to copy results. Please try again.");
+                console.error('Failed to copy: ', err);
+            }
+        }
+        
+        // Download results as a text file
+        function downloadResults() {
+            const text = outputText.textContent;
+            
+            if (!text.trim()) {
+                showNotification("No results to download!");
+                return;
+            }
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'unique_lines.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification("Results downloaded!");
+        }
+        
+        // Set preset examples
+        function setPresetExample(presetType) {
+            let text = '';
+            
+            switch(presetType) {
+                case 'emails':
+                    text = `john.doe@example.com
+jane.smith@example.com
+john.doe@example.com
+alice.johnson@example.com
+jane.smith@example.com
+bob.williams@example.com
+john.doe@example.com
+alice.johnson@example.com
+charlie.brown@example.com
+jane.smith@example.com`;
+                    break;
+                case 'urls':
+                    text = `https://www.example.com/page1
+https://www.example.com/page2
+https://www.example.com/page1
+https://www.example.com/page3
+https://www.example.com/page2
+https://www.example.com/page4
+https://www.example.com/page1
+https://www.example.com/page3
+https://www.example.com/page5`;
+                    break;
+                case 'names':
+                    text = `John Smith
+Jane Doe
+John Smith
+Alice Johnson
+Jane Doe
+Bob Williams
+John Smith
+Alice Johnson
+Charlie Brown
+Jane Doe
+David Miller
+Alice Johnson`;
+                    break;
+                case 'clear':
+                    text = '';
+                    break;
+            }
+            
+            inputText.value = text;
+            updateLineCountLabel();
+            countDuplicates(text);
+            removeDuplicateLines();
+            
+            if (presetType !== 'clear') {
+                showNotification(`Loaded ${presetType} example`);
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize event listeners
+        function initDuplicateRemover() {
+            // Initialize with default text
+            updateLineCountLabel();
+            countDuplicates(inputText.value);
+            removeDuplicateLines();
+            
+            // Input text events
+            inputText.addEventListener('input', () => {
+                updateLineCountLabel();
+                countDuplicates(inputText.value);
+            });
+            
+            // Option checkbox events
+            const checkboxes = [trimLinesCheckbox, caseSensitiveCheckbox, ignoreEmptyCheckbox, preserveOrderCheckbox];
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', removeDuplicateLines);
+            });
+            
+            // Remove button
+            removeButton.addEventListener('click', removeDuplicateLines);
+            
+            // Clear button
+            clearButton.addEventListener('click', clearAllText);
+            
+            // Paste button
+            pasteButton.addEventListener('click', pasteFromClipboard);
+            
+            // Copy button
+            copyButton.addEventListener('click', copyResultsToClipboard);
+            
+            // Download button
+            downloadButton.addEventListener('click', downloadResults);
+            
+            // Preset buttons
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const presetType = button.getAttribute('data-preset');
+                    setPresetExample(presetType);
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + Enter to remove duplicates
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    removeDuplicateLines();
+                }
+                
+                // Ctrl/Cmd + C to copy results
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement !== inputText) {
+                    copyResultsToClipboard();
+                }
+                
+                // Ctrl/Cmd + V to paste (when input is focused)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'v' && document.activeElement === inputText) {
+                    // Let the default paste happen first, then process
+                    setTimeout(() => {
+                        updateLineCountLabel();
+                        countDuplicates(inputText.value);
+                        removeDuplicateLines();
+                    }, 100);
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearAllText();
+                }
+            });
+            
+            // Auto-process on input (with debounce)
+            let processTimeout;
+            inputText.addEventListener('input', () => {
+                clearTimeout(processTimeout);
+                processTimeout = setTimeout(removeDuplicateLines, 500);
+            });
+        }
+        
+        // Initialize duplicate remover when page loads
+        document.addEventListener('DOMContentLoaded', initDuplicateRemover);
+    </script>
+</body>
+</html>

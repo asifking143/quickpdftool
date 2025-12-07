@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encryptor | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --light-blue: #4d94ff;
+            --lighter-blue: #e6f0ff;
+            --dark-blue: #0052cc;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5eb;
+            --dark-gray: #666666;
+            --shadow: rgba(0, 102, 255, 0.15);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --purple: #8b5cf6;
+            --security-red: #ef4444;
+            --security-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--lighter-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .input-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-input-container {
+            margin-bottom: 25px;
+        }
+
+        .text-input-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count-label {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            background-color: var(--lighter-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--medium-gray);
+            transition: border-color 0.3s ease;
+        }
+
+        .textarea-wrapper:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 20px;
+            border: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        .textarea-header {
+            background-color: var(--lighter-blue);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .textarea-header span {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .controls-section {
+            margin-top: 30px;
+        }
+
+        .controls-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .encryption-methods {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .encryption-methods h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .method-option {
+            background-color: white;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .method-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .method-option.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .method-icon {
+            font-size: 1.8rem;
+        }
+
+        .method-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .method-security {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background-color: var(--lighter-blue);
+            color: var(--primary-blue);
+        }
+
+        .method-option.active .method-security {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .key-input-section {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .key-input-section h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .key-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .key-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .key-generate {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-generate:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 140px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .action-button.encrypt {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .action-button.encrypt:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-button.decrypt {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .action-button.decrypt:hover {
+            background-color: #0da271;
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+        }
+
+        .action-button.secondary:hover {
+            background-color: var(--medium-gray);
+        }
+
+        .action-button.warning {
+            background-color: var(--warning-orange);
+            color: white;
+        }
+
+        .action-button.warning:hover {
+            background-color: #d97706;
+        }
+
+        .preset-examples {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+        }
+
+        .preset-examples h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-button {
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preset-button:hover {
+            background-color: var(--light-blue);
+            color: white;
+            border-color: var(--light-blue);
+        }
+
+        .results-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .results-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-container {
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 30px;
+            border: 2px solid var(--light-blue);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .results-header {
+            background-color: var(--light-blue);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 13px 13px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .result-text {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 13px 13px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 300px;
+            font-family: monospace;
+        }
+
+        .security-info {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+        }
+
+        .security-info h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .security-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .security-card.caesar {
+            border-left-color: var(--warning-orange);
+        }
+
+        .security-card.base64 {
+            border-left-color: var(--success-green);
+        }
+
+        .security-card.custom {
+            border-left-color: var(--purple);
+        }
+
+        .security-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+
+        .security-card.caesar .security-icon {
+            color: var(--warning-orange);
+        }
+
+        .security-card.base64 .security-icon {
+            color: var(--success-green);
+        }
+
+        .security-card.custom .security-icon {
+            color: var(--purple);
+        }
+
+        .security-name {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+
+        .security-desc {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            line-height: 1.5;
+        }
+
+        .security-warning {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: rgba(239, 68, 68, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--security-red);
+        }
+
+        .security-warning h4 {
+            color: var(--security-red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-warning p {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-section, .results-section {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section, .results-section {
+                padding: 25px;
+            }
+            
+            .method-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .key-input-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .key-generate {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+            
+            textarea, .result-text {
+                min-height: 220px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-section, .results-section {
+                padding: 20px;
+            }
+            
+            .results-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-indicator .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--lighter-blue);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .encrypted-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .decrypted-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--warning-orange);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .locked-icon {
+            color: var(--security-green);
+        }
+
+        .unlocked-icon {
+            color: var(--warning-orange);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-lock"></i> Text Encryptor</h1>
+        <p>Securely encrypt and decrypt text using various cryptographic methods. Protect sensitive information with Caesar cipher, Base64 encoding, or custom key-based encryption.</p>
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>All processing happens locally in your browser</span>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="input-section">
+            <h2><i class="fas fa-edit"></i> Input Text</h2>
+            
+            <div class="text-input-container">
+                <label>
+                    Type or paste your text
+                    <span class="char-count-label" id="charCountLabel">0 characters</span>
+                </label>
+                <div class="textarea-wrapper">
+                    <div class="textarea-header">
+                        <span id="inputLabel">Text to Encrypt</span>
+                        <span id="securityLabel"><i class="fas fa-lock"></i> Secure</span>
+                    </div>
+                    <textarea id="inputText" placeholder="Enter sensitive text to encrypt or encrypted text to decrypt...">This is a confidential message that needs encryption.</textarea>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <h3><i class="fas fa-sliders-h"></i> Encryption Settings</h3>
+                
+                <div class="encryption-methods">
+                    <h4><i class="fas fa-key"></i> Encryption Method</h4>
+                    <div class="method-grid">
+                        <div class="method-option active" data-method="caesar">
+                            <div class="method-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="method-name">Caesar Cipher</div>
+                            <div class="method-security">Basic Security</div>
+                        </div>
+                        
+                        <div class="method-option" data-method="base64">
+                            <div class="method-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="method-name">Base64</div>
+                            <div class="method-security">Encoding</div>
+                        </div>
+                        
+                        <div class="method-option" data-method="xor">
+                            <div class="method-icon">
+                                <i class="fas fa-random"></i>
+                            </div>
+                            <div class="method-name">XOR Cipher</div>
+                            <div class="method-security">Custom Key</div>
+                        </div>
+                        
+                        <div class="method-option" data-method="reverse">
+                            <div class="method-icon">
+                                <i class="fas fa-retweet"></i>
+                            </div>
+                            <div class="method-name">Reverse + XOR</div>
+                            <div class="method-security">Enhanced</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-input-section" id="keySection">
+                    <h4><i class="fas fa-user-secret"></i> Encryption Key</h4>
+                    <div class="key-input-wrapper">
+                        <input type="text" class="key-input" id="encryptionKey" placeholder="Enter encryption key (e.g., 'secret123')" value="quickpdf2023">
+                        <button class="key-generate" id="generateKey">
+                            <i class="fas fa-key"></i> Generate
+                        </button>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 10px;">Keep this key safe! You'll need it to decrypt the text.</p>
+                </div>
+                
+                <div class="preset-examples">
+                    <h4><i class="fas fa-lightbulb"></i> Quick Examples</h4>
+                    <p style="color: var(--dark-gray); font-size: 0.95rem; margin-bottom: 10px;">Try encrypting these sample texts:</p>
+                    <div class="preset-buttons">
+                        <button class="preset-button" data-preset="message">Secret Message</button>
+                        <button class="preset-button" data-preset="password">Password</button>
+                        <button class="preset-button" data-preset="email">Email Draft</button>
+                        <button class="preset-button" data-preset="clear">Clear Text</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button encrypt" id="encryptButton">
+                    <i class="fas fa-lock"></i> Encrypt Text
+                </button>
+                <button class="action-button decrypt" id="decryptButton">
+                    <i class="fas fa-unlock"></i> Decrypt Text
+                </button>
+                <button class="action-button secondary" id="clearButton">
+                    <i class="fas fa-eraser"></i> Clear All
+                </button>
+                <button class="action-button warning" id="pasteButton">
+                    <i class="fas fa-paste"></i> Paste Text
+                </button>
+            </div>
+            
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Processing your text...</p>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2><i class="fas fa-file-alt"></i> Output</h2>
+            
+            <div class="results-container">
+                <div class="results-header">
+                    <div class="results-title">
+                        <i class="fas fa-lock" id="outputIcon"></i>
+                        <span id="outputTitle">Encrypted Text</span>
+                    </div>
+                    <div class="results-stats">
+                        <div class="stat-badge" id="outputCharCount">0 chars</div>
+                        <div class="stat-badge" id="outputMethod">Caesar</div>
+                    </div>
+                </div>
+                <div class="result-text" id="outputText">
+Vskt kt e gpsgfsktjpeo qukiiqv vjep oqqfu qugvatkqp.
+                </div>
+            </div>
+            
+            <div class="security-info">
+                <h3><i class="fas fa-shield-alt"></i> Security Information</h3>
+                <div class="security-grid">
+                    <div class="security-card caesar">
+                        <div class="security-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="security-name">Caesar Cipher</div>
+                        <div class="security-desc">Shifts each letter by a fixed number. Basic security, easily breakable with frequency analysis.</div>
+                    </div>
+                    
+                    <div class="security-card base64">
+                        <div class="security-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="security-name">Base64</div>
+                        <div class="security-desc">Encoding scheme, not encryption. Converts binary to text. Easily reversible with no key.</div>
+                    </div>
+                    
+                    <div class="security-card custom">
+                        <div class="security-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <div class="security-name">Custom Key Ciphers</div>
+                        <div class="security-desc">Uses your custom key for encryption. Security depends on key strength and secrecy.</div>
+                    </div>
+                </div>
+                
+                <div class="security-warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Security Notice</h4>
+                    <p>This tool provides basic encryption for educational and casual use. Do not use for highly sensitive information. For serious security needs, use industry-standard encryption tools like AES-256 with proper key management.</p>
+                </div>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-button decrypt" id="copyButton">
+                    <i class="far fa-copy"></i> Copy Output
+                </button>
+                <button class="action-button secondary" id="downloadButton">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="action-button warning" id="swapButton">
+                    <i class="fas fa-exchange-alt"></i> Swap Text
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><i class="fas fa-lock"></i> Text Encryptor Tool - Part of QuickPDFTool | © 2023 All Rights Reserved</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">All encryption/decryption happens locally in your browser. No data is sent to any server.</p>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Text encrypted successfully!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const charCountLabel = document.getElementById('charCountLabel');
+        const inputLabel = document.getElementById('inputLabel');
+        const securityLabel = document.getElementById('securityLabel');
+        
+        const outputTitle = document.getElementById('outputTitle');
+        const outputIcon = document.getElementById('outputIcon');
+        const outputCharCount = document.getElementById('outputCharCount');
+        const outputMethod = document.getElementById('outputMethod');
+        
+        // Method options
+        const methodOptions = document.querySelectorAll('.method-option');
+        const keySection = document.getElementById('keySection');
+        const encryptionKey = document.getElementById('encryptionKey');
+        
+        // Buttons
+        const encryptButton = document.getElementById('encryptButton');
+        const decryptButton = document.getElementById('decryptButton');
+        const clearButton = document.getElementById('clearButton');
+        const pasteButton = document.getElementById('pasteButton');
+        const copyButton = document.getElementById('copyButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const swapButton = document.getElementById('swapButton');
+        const generateKey = document.getElementById('generateKey');
+        const presetButtons = document.querySelectorAll('.preset-button[data-preset]');
+        
+        // Notification and loading
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // State variables
+        let currentMethod = 'caesar';
+        let isEncrypted = false;
+        
+        // Update character count
+        function updateCharCount() {
+            const text = inputText.value;
+            const count = text.length;
+            charCountLabel.textContent = `${count.toLocaleString()} character${count !== 1 ? 's' : ''}`;
+            
+            return count;
+        }
+        
+        // Generate random encryption key
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let key = '';
+            const length = Math.floor(Math.random() * 10) + 8; // 8-17 characters
+            
+            for (let i = 0; i < length; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            encryptionKey.value = key;
+            showNotification("New encryption key generated!");
+        }
+        
+        // Caesar Cipher encryption/decryption
+        function caesarCipher(text, shift, encrypt = true) {
+            if (!encrypt) shift = -shift;
+            
+            return text.split('').map(char => {
+                if (char.match(/[a-z]/i)) {
+                    const code = char.charCodeAt(0);
+                    const isUpperCase = char === char.toUpperCase();
+                    const base = isUpperCase ? 65 : 97;
+                    
+                    // Apply shift with wrapping
+                    let shifted = ((code - base + shift) % 26 + 26) % 26 + base;
+                    return String.fromCharCode(shifted);
+                }
+                return char;
+            }).join('');
+        }
+        
+        // Base64 encoding/decoding
+        function base64Encode(text) {
+            return btoa(unescape(encodeURIComponent(text)));
+        }
+        
+        function base64Decode(text) {
+            try {
+                return decodeURIComponent(escape(atob(text)));
+            } catch (e) {
+                return "Invalid Base64 encoded text";
+            }
+        }
+        
+        // XOR Cipher encryption/decryption
+        function xorCipher(text, key, encrypt = true) {
+            let result = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i);
+                const keyChar = key.charCodeAt(i % key.length);
+                const processed = charCode ^ keyChar;
+                
+                // For encryption, we want to create characters that are printable
+                // For decryption, we just XOR again
+                result += String.fromCharCode(processed);
+            }
+            
+            return result;
+        }
+        
+        // Reverse + XOR Cipher (enhanced method)
+        function reverseXorCipher(text, key, encrypt = true) {
+            if (encrypt) {
+                // First reverse the text, then apply XOR
+                const reversed = text.split('').reverse().join('');
+                return xorCipher(reversed, key, true);
+            } else {
+                // First apply XOR, then reverse
+                const xored = xorCipher(text, key, false);
+                return xored.split('').reverse().join('');
+            }
+        }
+        
+        // Process text based on selected method
+        function processText(encrypt = true) {
+            const text = inputText.value;
+            const key = encryptionKey.value.trim();
+            
+            if (!text.trim()) {
+                showNotification(`No text to ${encrypt ? 'encrypt' : 'decrypt'}!`);
+                return;
+            }
+            
+            if ((currentMethod === 'xor' || currentMethod === 'reverse') && !key) {
+                showNotification("Please enter an encryption key!");
+                encryptionKey.focus();
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                let result;
+                let success = true;
+                let shiftAmount = key ? parseInt(key) || 3 : 3; // Use key as shift for Caesar if it's a number
+                
+                if (isNaN(shiftAmount)) shiftAmount = 3;
+                
+                try {
+                    switch(currentMethod) {
+                        case 'caesar':
+                            result = caesarCipher(text, shiftAmount, encrypt);
+                            outputMethod.textContent = "Caesar";
+                            break;
+                        case 'base64':
+                            if (encrypt) {
+                                result = base64Encode(text);
+                            } else {
+                                result = base64Decode(text);
+                            }
+                            outputMethod.textContent = "Base64";
+                            break;
+                        case 'xor':
+                            result = xorCipher(text, key, encrypt);
+                            outputMethod.textContent = "XOR";
+                            break;
+                        case 'reverse':
+                            result = reverseXorCipher(text, key, encrypt);
+                            outputMethod.textContent = "Reverse+XOR";
+                            break;
+                        default:
+                            result = caesarCipher(text, 3, encrypt);
+                    }
+                } catch (error) {
+                    result = `Error: ${error.message}`;
+                    success = false;
+                }
+                
+                // Update result text
+                outputText.textContent = result;
+                
+                // Update UI based on operation
+                if (encrypt) {
+                    outputTitle.textContent = "Encrypted Text";
+                    outputIcon.className = "fas fa-lock locked-icon";
+                    inputLabel.textContent = "Text to Encrypt";
+                    isEncrypted = true;
+                } else {
+                    outputTitle.textContent = "Decrypted Text";
+                    outputIcon.className = "fas fa-unlock unlocked-icon";
+                    inputLabel.textContent = "Text to Decrypt";
+                    isEncrypted = false;
+                }
+                
+                // Update statistics
+                outputCharCount.textContent = `${result.length.toLocaleString()} chars`;
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                
+                if (success) {
+                    showNotification(`Text ${encrypt ? 'encrypted' : 'decrypted'} successfully using ${outputMethod.textContent}!`);
+                } else {
+                    showNotification("Error processing text. Please check your input.");
+                }
+            }, 400);
+        }
+        
+        // Clear all text
+        function clearAllText() {
+            inputText.value = '';
+            outputText.textContent = '';
+            updateCharCount();
+            outputCharCount.textContent = "0 chars";
+            showNotification("All text cleared!");
+            
+            // Focus back on the textarea
+            inputText.focus();
+        }
+        
+        // Paste text from clipboard
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputText.value = text;
+                updateCharCount();
+                showNotification("Text pasted from clipboard!");
+            } catch (err) {
+                showNotification("Unable to paste. Please paste manually.");
+                console.error('Failed to paste: ', err);
+            }
+        }
+        
+        // Copy results to clipboard
+        async function copyResultsToClipboard() {
+            const text = outputText.textContent;
+            
+            if (!text.trim()) {
+                showNotification("No results to copy!");
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification("Output copied to clipboard!");
+            } catch (err) {
+                showNotification("Failed to copy results. Please try again.");
+                console.error('Failed to copy: ', err);
+            }
+        }
+        
+        // Download results as a text file
+        function downloadResults() {
+            const text = outputText.textContent;
+            
+            if (!text.trim()) {
+                showNotification("No results to download!");
+                return;
+            }
+            
+            const operation = isEncrypted ? 'encrypted' : 'decrypted';
+            const method = outputMethod.textContent.toLowerCase();
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${operation}_text_${method}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Text downloaded as ${operation}_text_${method}.txt`);
+        }
+        
+        // Swap input and output text
+        function swapText() {
+            const input = inputText.value;
+            const output = outputText.textContent;
+            
+            if (!output.trim()) {
+                showNotification("No output to swap!");
+                return;
+            }
+            
+            inputText.value = output;
+            outputText.textContent = input;
+            
+            // Toggle encryption state
+            isEncrypted = !isEncrypted;
+            
+            if (isEncrypted) {
+                outputTitle.textContent = "Encrypted Text";
+                outputIcon.className = "fas fa-lock locked-icon";
+                inputLabel.textContent = "Text to Decrypt";
+            } else {
+                outputTitle.textContent = "Decrypted Text";
+                outputIcon.className = "fas fa-unlock unlocked-icon";
+                inputLabel.textContent = "Text to Encrypt";
+            }
+            
+            updateCharCount();
+            outputCharCount.textContent = `${outputText.textContent.length.toLocaleString()} chars`;
+            
+            showNotification("Text swapped successfully!");
+        }
+        
+        // Set preset example
+        function setPresetExample(presetType) {
+            let text = '';
+            
+            switch(presetType) {
+                case 'message':
+                    text = `Meeting scheduled for Friday at 3 PM. Location: Conference Room B. Bring the quarterly reports.`;
+                    break;
+                case 'password':
+                    text = `MySecurePassword123!@#`;
+                    break;
+                case 'email':
+                    text = `Dear Team,
+
+Please find attached the draft proposal for the upcoming project. The budget estimate is $45,000 and the timeline is 3 months.
+
+We need your feedback by EOD Friday.
+
+Best regards,
+Project Manager`;
+                    break;
+                case 'clear':
+                    text = '';
+                    break;
+            }
+            
+            inputText.value = text;
+            updateCharCount();
+            
+            if (presetType !== 'clear') {
+                showNotification(`Loaded ${presetType} example`);
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize event listeners
+        function initEncryptor() {
+            // Initialize with default text
+            updateCharCount();
+            processText(true);
+            
+            // Input text events
+            inputText.addEventListener('input', updateCharCount);
+            
+            // Method selection
+            methodOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    methodOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    // Update current method
+                    currentMethod = option.getAttribute('data-method');
+                    
+                    // Show/hide key section based on method
+                    if (currentMethod === 'xor' || currentMethod === 'reverse') {
+                        keySection.style.display = 'block';
+                    } else {
+                        keySection.style.display = 'block'; // Still show for Caesar to use as shift
+                    }
+                });
+            });
+            
+            // Generate key button
+            generateKey.addEventListener('click', generateRandomKey);
+            
+            // Encrypt button
+            encryptButton.addEventListener('click', () => processText(true));
+            
+            // Decrypt button
+            decryptButton.addEventListener('click', () => processText(false));
+            
+            // Clear button
+            clearButton.addEventListener('click', clearAllText);
+            
+            // Paste button
+            pasteButton.addEventListener('click', pasteFromClipboard);
+            
+            // Copy button
+            copyButton.addEventListener('click', copyResultsToClipboard);
+            
+            // Download button
+            downloadButton.addEventListener('click', downloadResults);
+            
+            // Swap button
+            swapButton.addEventListener('click', swapText);
+            
+            // Example buttons
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const presetType = button.getAttribute('data-preset');
+                    setPresetExample(presetType);
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + E to encrypt
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                    e.preventDefault();
+                    processText(true);
+                }
+                
+                // Ctrl/Cmd + D to decrypt
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                    e.preventDefault();
+                    processText(false);
+                }
+                
+                // Ctrl/Cmd + C to copy results
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement !== inputText) {
+                    copyResultsToClipboard();
+                }
+                
+                // Ctrl/Cmd + V to paste (when input is focused)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'v' && document.activeElement === inputText) {
+                    // Let the default paste happen first, then update count
+                    setTimeout(updateCharCount, 100);
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearAllText();
+                }
+                
+                // S to swap
+                if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    swapText();
+                }
+            });
+        }
+        
+        // Initialize encryptor when page loads
+        document.addEventListener('DOMContentLoaded', initEncryptor);
+    </script>
+</body>
+</html>

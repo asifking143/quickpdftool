@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder/Decoder - QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 20px rgba(13, 71, 161, 0.15);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .tool-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .tool-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section, .output-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e1e8ed;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #1e88e5;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f7ff;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 280px;
+            padding: 18px;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .text-area:focus {
+            outline: none;
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #1e88e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d47a1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #f1f8ff;
+            color: #1e88e5;
+            border: 1px solid #1e88e5;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+
+        .output-info {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #555;
+            border-left: 4px solid #1e88e5;
+        }
+
+        .output-info i {
+            color: #1e88e5;
+            margin-right: 8px;
+        }
+
+        .instructions {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .instructions h3 {
+            color: #1e88e5;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .example {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #1e88e5;
+        }
+
+        .example strong {
+            color: #1e88e5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .action-status {
+            display: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .character-count {
+            text-align: right;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-link"></i>
+            </div>
+            <h1>URL Encoder/Decoder</h1>
+            <p class="tagline">Quickly encode text into URL-safe format or decode URL-encoded strings back to readable text. Simple, fast, and free!</p>
+        </header>
+
+        <main>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h2 class="section-title"><i class="fas fa-keyboard"></i> Input Text</h2>
+                    <textarea id="inputText" class="text-area" placeholder="Enter text to encode or a URL-encoded string to decode..."></textarea>
+                    <div id="inputCharCount" class="character-count">Characters: 0</div>
+                    
+                    <div class="controls">
+                        <button id="encodeBtn" class="btn btn-primary">
+                            <i class="fas fa-lock"></i> Encode URL
+                        </button>
+                        <button id="decodeBtn" class="btn btn-primary">
+                            <i class="fas fa-unlock"></i> Decode URL
+                        </button>
+                        <button id="clearBtn" class="btn btn-secondary">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <h2 class="section-title"><i class="fas fa-file-code"></i> Output</h2>
+                    <textarea id="outputText" class="text-area" placeholder="Your encoded or decoded result will appear here..." readonly></textarea>
+                    <div id="outputCharCount" class="character-count">Characters: 0</div>
+                    
+                    <div class="controls">
+                        <button id="copyBtn" class="btn btn-success">
+                            <i class="fas fa-copy"></i> Copy Output
+                        </button>
+                    </div>
+                    
+                    <div id="actionStatus" class="action-status"></div>
+                    
+                    <div class="output-info">
+                        <p><i class="fas fa-info-circle"></i> URL encoding converts characters into a format that can be transmitted over the internet. Decoding reverses this process.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3><i class="fas fa-graduation-cap"></i> How to Use the URL Encoder/Decoder</h3>
+                <ul>
+                    <li><strong>To encode:</strong> Enter or paste your text in the input field and click "Encode URL". Special characters will be converted to percent-encoded format.</li>
+                    <li><strong>To decode:</strong> Enter or paste a URL-encoded string in the input field and click "Decode URL". Percent-encoded characters will be converted back to readable text.</li>
+                    <li>Use the "Clear" button to reset both input and output fields.</li>
+                    <li>Use the "Copy Output" button to copy the result to your clipboard.</li>
+                </ul>
+                
+                <div class="example">
+                    <p><strong>Example:</strong> Encoding "Hello World!" produces "Hello%20World%21". Decoding "https%3A%2F%2Fexample.com%2Fpage%3Fid%3D1" produces "https://example.com/page?id=1".</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2023 QuickPDFTool - URL Encoder/Decoder Tool. All rights reserved.</p>
+            <p>This tool is free to use for encoding and decoding URLs.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const actionStatus = document.getElementById('actionStatus');
+            const inputCharCount = document.getElementById('inputCharCount');
+            const outputCharCount = document.getElementById('outputCharCount');
+            
+            // Update character count for input
+            inputText.addEventListener('input', function() {
+                inputCharCount.textContent = `Characters: ${inputText.value.length}`;
+            });
+            
+            // Update character count for output
+            outputText.addEventListener('input', function() {
+                outputCharCount.textContent = `Characters: ${outputText.value.length}`;
+            });
+            
+            // Encode URL function
+            encodeBtn.addEventListener('click', function() {
+                if (!inputText.value.trim()) {
+                    showStatus('Please enter some text to encode.', 'error');
+                    return;
+                }
+                
+                try {
+                    const encoded = encodeURIComponent(inputText.value);
+                    outputText.value = encoded;
+                    outputCharCount.textContent = `Characters: ${encoded.length}`;
+                    showStatus('Text successfully encoded to URL format!', 'success');
+                } catch (error) {
+                    showStatus('An error occurred during encoding. Please try again.', 'error');
+                    console.error('Encoding error:', error);
+                }
+            });
+            
+            // Decode URL function
+            decodeBtn.addEventListener('click', function() {
+                if (!inputText.value.trim()) {
+                    showStatus('Please enter a URL-encoded string to decode.', 'error');
+                    return;
+                }
+                
+                try {
+                    const decoded = decodeURIComponent(inputText.value);
+                    outputText.value = decoded;
+                    outputCharCount.textContent = `Characters: ${decoded.length}`;
+                    showStatus('URL-encoded string successfully decoded!', 'success');
+                } catch (error) {
+                    showStatus('Invalid URL-encoded string. Please check your input and try again.', 'error');
+                    console.error('Decoding error:', error);
+                }
+            });
+            
+            // Clear function
+            clearBtn.addEventListener('click', function() {
+                inputText.value = '';
+                outputText.value = '';
+                inputCharCount.textContent = 'Characters: 0';
+                outputCharCount.textContent = 'Characters: 0';
+                actionStatus.style.display = 'none';
+                inputText.focus();
+                showStatus('All fields cleared.', 'success');
+            });
+            
+            // Copy output function
+            copyBtn.addEventListener('click', function() {
+                if (!outputText.value.trim()) {
+                    showStatus('No output to copy. Please encode or decode something first.', 'error');
+                    return;
+                }
+                
+                outputText.select();
+                outputText.setSelectionRange(0, 99999); // For mobile devices
+                
+                try {
+                    navigator.clipboard.writeText(outputText.value).then(() => {
+                        showStatus('Output copied to clipboard!', 'success');
+                    }).catch(err => {
+                        // Fallback for older browsers
+                        document.execCommand('copy');
+                        showStatus('Output copied to clipboard!', 'success');
+                    });
+                } catch (error) {
+                    showStatus('Failed to copy. Please try again.', 'error');
+                    console.error('Copy error:', error);
+                }
+            });
+            
+            // Show status message function
+            function showStatus(message, type) {
+                actionStatus.textContent = message;
+                actionStatus.className = 'action-status';
+                actionStatus.classList.add(`status-${type}`);
+                actionStatus.style.display = 'block';
+                
+                // Auto-hide status after 4 seconds
+                setTimeout(() => {
+                    actionStatus.style.display = 'none';
+                }, 4000);
+            }
+            
+            // Add example text on first load
+            window.addEventListener('load', function() {
+                // Only add example if the input is empty
+                if (!inputText.value.trim()) {
+                    inputText.value = 'https://example.com/search?q=Hello World!&sort=desc';
+                    inputCharCount.textContent = `Characters: ${inputText.value.length}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

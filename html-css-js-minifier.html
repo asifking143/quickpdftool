@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Minifier | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --light-blue: #4d94ff;
+            --lighter-blue: #e6f0ff;
+            --dark-blue: #0052cc;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5eb;
+            --dark-gray: #666666;
+            --shadow: rgba(0, 102, 255, 0.15);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --purple: #8b5cf6;
+            --code-bg: #1e1e1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .developer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--lighter-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .input-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-input-container {
+            margin-bottom: 25px;
+        }
+
+        .code-input-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count-label {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            background-color: var(--lighter-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .code-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--medium-gray);
+            transition: border-color 0.3s ease;
+        }
+
+        .code-wrapper:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .code-header {
+            background-color: var(--lighter-blue);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .code-header span {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .code-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: none;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background-color: var(--code-bg);
+            color: #f8f8f2;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .code-area:focus {
+            outline: none;
+        }
+
+        .controls-section {
+            margin-top: 30px;
+        }
+
+        .controls-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .minify-options {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .minify-options h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-blue);
+        }
+
+        .option-checkbox label {
+            font-size: 0.95rem;
+            color: var(--dark-gray);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .option-checkbox .option-desc {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .preset-examples {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+        }
+
+        .preset-examples h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-button {
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preset-button:hover {
+            background-color: var(--light-blue);
+            color: white;
+            border-color: var(--light-blue);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 140px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+        }
+
+        .action-button.secondary:hover {
+            background-color: var(--medium-gray);
+        }
+
+        .action-button.success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .action-button.success:hover {
+            background-color: #0da271;
+        }
+
+        .action-button.warning {
+            background-color: var(--warning-orange);
+            color: white;
+        }
+
+        .action-button.warning:hover {
+            background-color: #d97706;
+        }
+
+        .results-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .results-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-container {
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 30px;
+            border: 2px solid var(--light-blue);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .results-header {
+            background-color: var(--light-blue);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 13px 13px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .result-code {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--code-bg);
+            border-radius: 0 0 13px 13px;
+            font-size: 1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre;
+            word-wrap: break-word;
+            min-height: 300px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: #f8f8f2;
+        }
+
+        .comparison-section {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+        }
+
+        .comparison-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .comparison-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comparison-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .comparison-code {
+            color: var(--dark-gray);
+            line-height: 1.6;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 150px;
+            padding: 10px;
+            background-color: var(--light-gray);
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .benefits-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 20px;
+        }
+
+        .benefits-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .benefit-card {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .benefit-card h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .benefit-card p {
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-section, .results-section {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section, .results-section, .benefits-section {
+                padding: 25px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+            
+            .code-area, .result-code {
+                min-height: 250px;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-section, .results-section, .benefits-section {
+                padding: 20px;
+            }
+            
+            .results-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-indicator .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--lighter-blue);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .reduction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .syntax-highlight {
+            color: #f8f8f2;
+        }
+
+        .syntax-tag {
+            color: #ff79c6;
+        }
+
+        .syntax-attr {
+            color: #50fa7b;
+        }
+
+        .syntax-value {
+            color: #f1fa8c;
+        }
+
+        .syntax-comment {
+            color: #6272a4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-code"></i> HTML Minifier</h1>
+        <p>Minify your HTML code by removing unnecessary spaces, line breaks, and comments. Reduce file size and improve website loading speed.</p>
+        <div class="developer-badge">
+            <i class="fas fa-terminal"></i>
+            <span>Developer-friendly tool with syntax highlighting</span>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="input-section">
+            <h2><i class="fas fa-edit"></i> HTML Input</h2>
+            
+            <div class="code-input-container">
+                <label>
+                    Paste your HTML code
+                    <span class="char-count-label" id="charCountLabel">0 characters</span>
+                </label>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>Original HTML Code</span>
+                        <span id="lineCountLabel">0 lines</span>
+                    </div>
+                    <textarea id="inputCode" class="code-area" placeholder="Paste your HTML code here...">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;!-- This is a comment that will be removed --&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Sample Page&lt;/title&gt;
+    &lt;style&gt;
+        /* CSS comments will also be removed */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;header&gt;
+            &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+            &lt;nav&gt;
+                &lt;ul&gt;
+                    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/nav&gt;
+        &lt;/header&gt;
+        
+        &lt;main&gt;
+            &lt;section&gt;
+                &lt;h2&gt;About Us&lt;/h2&gt;
+                &lt;p&gt;This is a sample paragraph with some text content.&lt;/p&gt;
+            &lt;/section&gt;
+            
+            &lt;!-- Another comment to be removed --&gt;
+            &lt;section&gt;
+                &lt;h2&gt;Our Services&lt;/h2&gt;
+                &lt;div class=&quot;services&quot;&gt;
+                    &lt;div class=&quot;service-item&quot;&gt;
+                        &lt;h3&gt;Web Development&lt;/h3&gt;
+                        &lt;p&gt;We create responsive websites.&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;service-item&quot;&gt;
+                        &lt;h3&gt;SEO Optimization&lt;/h3&gt;
+                        &lt;p&gt;Improve your search rankings.&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+        &lt;/main&gt;
+        
+        &lt;footer&gt;
+            &lt;p&gt;&amp;copy; 2023 My Website. All rights reserved.&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt;
+        // JavaScript comments will be removed too
+        console.log('Page loaded');
+        
+        function init() {
+            // Function initialization code
+            console.log('Initializing...');
+        }
+        
+        window.addEventListener('load', init);
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <h3><i class="fas fa-sliders-h"></i> Minification Options</h3>
+                
+                <div class="minify-options">
+                    <h4><i class="fas fa-cog"></i> What to Remove</h4>
+                    <div class="options-grid">
+                        <div class="option-checkbox">
+                            <input type="checkbox" id="removeSpaces" checked>
+                            <label for="removeSpaces">Remove unnecessary whitespace
+                                <div class="option-desc">Spaces, tabs, and indentation</div>
+                            </label>
+                        </div>
+                        <div class="option-checkbox">
+                            <input type="checkbox" id="removeLineBreaks" checked>
+                            <label for="removeLineBreaks">Remove line breaks
+                                <div class="option-desc">Convert multi-line to single line</div>
+                            </label>
+                        </div>
+                        <div class="option-checkbox">
+                            <input type="checkbox" id="removeComments" checked>
+                            <label for="removeComments">Remove HTML/CSS/JS comments
+                                <div class="option-desc">&lt;!-- --&gt;, /* */, //</div>
+                            </label>
+                        </div>
+                        <div class="option-checkbox">
+                            <input type="checkbox" id="preserveInline" checked>
+                            <label for="preserveInline">Preserve inline formatting
+                                <div class="option-desc">Keep spaces inside text nodes</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preset-examples">
+                    <h4><i class="fas fa-lightbulb"></i> Quick Templates</h4>
+                    <p style="color: var(--dark-gray); font-size: 0.95rem; margin-bottom: 10px;">Try these HTML templates:</p>
+                    <div class="preset-buttons">
+                        <button class="preset-button" data-preset="basic">Basic HTML</button>
+                        <button class="preset-button" data-preset="bootstrap">Bootstrap Page</button>
+                        <button class="preset-button" data-preset="form">Contact Form</button>
+                        <button class="preset-button" data-preset="clear">Clear Code</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button primary" id="minifyButton">
+                    <i class="fas fa-compress-alt"></i> Minify HTML
+                </button>
+                <button class="action-button secondary" id="clearButton">
+                    <i class="fas fa-eraser"></i> Clear All
+                </button>
+                <button class="action-button success" id="pasteButton">
+                    <i class="fas fa-paste"></i> Paste Code
+                </button>
+                <button class="action-button warning" id="formatButton">
+                    <i class="fas fa-indent"></i> Format Code
+                </button>
+            </div>
+            
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Minifying your HTML...</p>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2><i class="fas fa-file-code"></i> Minified Output</h2>
+            
+            <div class="results-container">
+                <div class="results-header">
+                    <div class="results-title">
+                        <i class="fas fa-compress-alt"></i>
+                        <span>Minified HTML Code</span>
+                        <span class="reduction-badge" id="reductionBadge">0% smaller</span>
+                    </div>
+                    <div class="results-stats">
+                        <div class="stat-badge" id="outputCharCount">0 chars</div>
+                        <div class="stat-badge" id="outputLineCount">1 line</div>
+                    </div>
+                </div>
+                <pre class="result-code" id="outputCode">&lt;!DOCTYPE html&gt;&lt;html lang="en"&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1.0"&gt;&lt;title&gt;Sample Page&lt;/title&gt;&lt;style&gt;body{margin:0;padding:20px;font-family:Arial,sans-serif}.container{max-width:1200px;margin:0 auto}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class="container"&gt;&lt;header&gt;&lt;h1&gt;Welcome to My Website&lt;/h1&gt;&lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/nav&gt;&lt;/header&gt;&lt;main&gt;&lt;section&gt;&lt;h2&gt;About Us&lt;/h2&gt;&lt;p&gt;This is a sample paragraph with some text content.&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;Our Services&lt;/h2&gt;&lt;div class="services"&gt;&lt;div class="service-item"&gt;&lt;h3&gt;Web Development&lt;/h3&gt;&lt;p&gt;We create responsive websites.&lt;/p&gt;&lt;/div&gt;&lt;div class="service-item"&gt;&lt;h3&gt;SEO Optimization&lt;/h3&gt;&lt;p&gt;Improve your search rankings.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/main&gt;&lt;footer&gt;&lt;p&gt;&amp;copy; 2023 My Website. All rights reserved.&lt;/p&gt;&lt;/footer&gt;&lt;/div&gt;&lt;script&gt;console.log('Page loaded');function init(){console.log('Initializing...')}window.addEventListener('load',init);&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</pre>
+            </div>
+            
+            <div class="comparison-section">
+                <h3><i class="fas fa-balance-scale"></i> Size Comparison</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label">
+                            <i class="fas fa-file"></i>
+                            <span>Original HTML</span>
+                        </div>
+                        <div class="comparison-stats">
+                            <span id="originalSize">0 bytes</span>
+                            <span id="originalLines">0 lines</span>
+                        </div>
+                        <div class="comparison-code" id="originalPreview">
+                            <!-- Preview will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">
+                            <i class="fas fa-file-export"></i>
+                            <span>Minified HTML</span>
+                        </div>
+                        <div class="comparison-stats">
+                            <span id="minifiedSize">0 bytes</span>
+                            <span id="minifiedLines">1 line</span>
+                        </div>
+                        <div class="comparison-code" id="minifiedPreview">
+                            <!-- Preview will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-button success" id="copyButton">
+                    <i class="far fa-copy"></i> Copy Minified Code
+                </button>
+                <button class="action-button secondary" id="downloadButton">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="action-button primary" id="swapButton">
+                    <i class="fas fa-exchange-alt"></i> Swap Code
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="benefits-section">
+        <h2><i class="fas fa-chart-line"></i> Benefits of HTML Minification</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <h4><i class="fas fa-tachometer-alt"></i> Faster Loading</h4>
+                <p>Minified HTML files are smaller in size, which means they load faster in browsers. This improves user experience and can boost SEO rankings.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <h4><i class="fas fa-mobile-alt"></i> Better Performance</h4>
+                <p>Reduced file size means less bandwidth consumption, which is especially important for mobile users with limited data plans.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <h4><i class="fas fa-server"></i> Reduced Server Load</h4>
+                <p>Smaller files require less server resources to transmit, allowing your server to handle more simultaneous requests efficiently.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><i class="fas fa-code"></i> HTML Minifier Tool - Part of QuickPDFTool | © 2023 All Rights Reserved</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">All processing happens locally in your browser. Your code is never sent to any server.</p>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">HTML minified successfully!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputCode = document.getElementById('inputCode');
+        const outputCode = document.getElementById('outputCode');
+        const charCountLabel = document.getElementById('charCountLabel');
+        const lineCountLabel = document.getElementById('lineCountLabel');
+        
+        const outputCharCount = document.getElementById('outputCharCount');
+        const outputLineCount = document.getElementById('outputLineCount');
+        const reductionBadge = document.getElementById('reductionBadge');
+        
+        // Comparison elements
+        const originalSize = document.getElementById('originalSize');
+        const originalLines = document.getElementById('originalLines');
+        const originalPreview = document.getElementById('originalPreview');
+        const minifiedSize = document.getElementById('minifiedSize');
+        const minifiedLines = document.getElementById('minifiedLines');
+        const minifiedPreview = document.getElementById('minifiedPreview');
+        
+        // Option checkboxes
+        const removeSpaces = document.getElementById('removeSpaces');
+        const removeLineBreaks = document.getElementById('removeLineBreaks');
+        const removeComments = document.getElementById('removeComments');
+        const preserveInline = document.getElementById('preserveInline');
+        
+        // Buttons
+        const minifyButton = document.getElementById('minifyButton');
+        const clearButton = document.getElementById('clearButton');
+        const pasteButton = document.getElementById('pasteButton');
+        const formatButton = document.getElementById('formatButton');
+        const copyButton = document.getElementById('copyButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const swapButton = document.getElementById('swapButton');
+        const presetButtons = document.querySelectorAll('.preset-button[data-preset]');
+        
+        // Notification and loading
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // Update character and line count
+        function updateCounts() {
+            const text = inputCode.value;
+            const charCount = text.length;
+            const lineCount = text === '' ? 0 : text.split('\n').length;
+            
+            charCountLabel.textContent = `${charCount.toLocaleString()} character${charCount !== 1 ? 's' : ''}`;
+            lineCountLabel.textContent = `${lineCount.toLocaleString()} line${lineCount !== 1 ? 's' : ''}`;
+            
+            return { charCount, lineCount };
+        }
+        
+        // Get minification options
+        function getMinifyOptions() {
+            return {
+                removeSpaces: removeSpaces.checked,
+                removeLineBreaks: removeLineBreaks.checked,
+                removeComments: removeComments.checked,
+                preserveInline: preserveInline.checked
+            };
+        }
+        
+        // Minify HTML code
+        function minifyHTML(code, options) {
+            let minified = code;
+            
+            // Remove HTML comments
+            if (options.removeComments) {
+                minified = minified.replace(/<!--[\s\S]*?-->/g, '');
+            }
+            
+            // Remove CSS comments (in style tags)
+            if (options.removeComments) {
+                minified = minified.replace(/<style[^>]*>[\s\S]*?<\/style>/g, function(match) {
+                    return match.replace(/\/\*[\s\S]*?\*\//g, '');
+                });
+            }
+            
+            // Remove JavaScript comments (in script tags)
+            if (options.removeComments) {
+                minified = minified.replace(/<script[^>]*>[\s\S]*?<\/script>/g, function(match) {
+                    return match
+                        .replace(/\/\/.*$/gm, '') // Remove single line comments
+                        .replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
+                });
+            }
+            
+            // Remove unnecessary whitespace (but preserve inline spaces if option is set)
+            if (options.removeSpaces) {
+                // First, preserve spaces in text content
+                if (options.preserveInline) {
+                    // Replace multiple spaces with single space in text nodes
+                    minified = minified.replace(/>\s+</g, '><'); // Between tags
+                    minified = minified.replace(/\s+/g, ' '); // Multiple spaces to single space
+                } else {
+                    minified = minified.replace(/\s+/g, ' '); // All whitespace to single space
+                }
+                
+                // Remove spaces around tags
+                minified = minified.replace(/\s*<\s*/g, '<');
+                minified = minified.replace(/\s*>\s*/g, '>');
+                
+                // Remove spaces around attributes
+                minified = minified.replace(/\s*=\s*/g, '=');
+            }
+            
+            // Remove line breaks
+            if (options.removeLineBreaks) {
+                minified = minified.replace(/\n/g, '');
+                minified = minified.replace(/\r/g, '');
+                minified = minified.replace(/\t/g, '');
+            }
+            
+            // Trim the result
+            minified = minified.trim();
+            
+            return minified;
+        }
+        
+        // Format HTML code (basic formatting)
+        function formatHTML(code) {
+            let formatted = code;
+            let indentLevel = 0;
+            const indentSize = 2;
+            
+            // First, ensure proper spacing for tags
+            formatted = formatted.replace(/>\s+</g, '>\n<');
+            
+            // Split by lines and process each line
+            const lines = formatted.split('\n');
+            const result = [];
+            
+            for (let line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (!trimmedLine) continue;
+                
+                // Decrease indent for closing tags
+                if (trimmedLine.startsWith('</')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                // Add indentation
+                const indent = ' '.repeat(indentLevel * indentSize);
+                result.push(indent + trimmedLine);
+                
+                // Increase indent for opening tags (unless self-closing)
+                if (trimmedLine.startsWith('<') && 
+                    !trimmedLine.startsWith('</') && 
+                    !trimmedLine.includes('/>') &&
+                    !trimmedLine.match(/<(meta|link|br|hr|img|input|area|base|col|command|embed|keygen|param|source|track|wbr)/i)) {
+                    indentLevel++;
+                }
+            }
+            
+            return result.join('\n');
+        }
+        
+        // Process HTML minification
+        function processMinification() {
+            const code = inputCode.value;
+            
+            if (!code.trim()) {
+                showNotification("No HTML code to minify!");
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                const options = getMinifyOptions();
+                const minified = minifyHTML(code, options);
+                
+                // Update output
+                outputCode.textContent = minified;
+                
+                // Update statistics
+                const originalStats = updateCounts();
+                const minifiedCharCount = minified.length;
+                const minifiedLineCount = minified.includes('\n') ? minified.split('\n').length : 1;
+                
+                outputCharCount.textContent = `${minifiedCharCount.toLocaleString()} chars`;
+                outputLineCount.textContent = `${minifiedLineCount.toLocaleString()} line${minifiedLineCount !== 1 ? 's' : ''}`;
+                
+                // Calculate reduction percentage
+                const reduction = originalStats.charCount > 0 ? 
+                    Math.round((1 - minifiedCharCount / originalStats.charCount) * 100) : 0;
+                
+                reductionBadge.textContent = `${reduction}% smaller`;
+                
+                // Update comparison section
+                originalSize.textContent = formatBytes(originalStats.charCount);
+                originalLines.textContent = `${originalStats.lineCount} line${originalStats.lineCount !== 1 ? 's' : ''}`;
+                minifiedSize.textContent = formatBytes(minifiedCharCount);
+                minifiedLines.textContent = `${minifiedLineCount} line${minifiedLineCount !== 1 ? 's' : ''}`;
+                
+                // Update previews
+                originalPreview.textContent = code.length > 200 ? 
+                    code.substring(0, 200) + '...' : code;
+                minifiedPreview.textContent = minified.length > 200 ? 
+                    minified.substring(0, 200) + '...' : minified;
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                
+                showNotification(`HTML minified! Reduced by ${reduction}%`);
+            }, 400);
+        }
+        
+        // Format bytes for display
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Clear all code
+        function clearAllCode() {
+            inputCode.value = '';
+            outputCode.textContent = '';
+            updateCounts();
+            outputCharCount.textContent = "0 chars";
+            outputLineCount.textContent = "0 lines";
+            reductionBadge.textContent = "0% smaller";
+            
+            // Clear comparison section
+            originalSize.textContent = "0 Bytes";
+            originalLines.textContent = "0 lines";
+            minifiedSize.textContent = "0 Bytes";
+            minifiedLines.textContent = "0 lines";
+            originalPreview.textContent = '';
+            minifiedPreview.textContent = '';
+            
+            showNotification("All code cleared!");
+            
+            // Focus back on the textarea
+            inputCode.focus();
+        }
+        
+        // Paste code from clipboard
+        async function pasteFromClipboard() {
+            try {
+                const code = await navigator.clipboard.readText();
+                inputCode.value = code;
+                updateCounts();
+                processMinification();
+                showNotification("Code pasted from clipboard!");
+            } catch (err) {
+                showNotification("Unable to paste. Please paste manually.");
+                console.error('Failed to paste: ', err);
+            }
+        }
+        
+        // Format code with proper indentation
+        function formatCode() {
+            const code = inputCode.value;
+            
+            if (!code.trim()) {
+                showNotification("No code to format!");
+                return;
+            }
+            
+            const formatted = formatHTML(code);
+            inputCode.value = formatted;
+            updateCounts();
+            processMinification();
+            showNotification("Code formatted with proper indentation!");
+        }
+        
+        // Copy minified code to clipboard
+        async function copyMinifiedCode() {
+            const code = outputCode.textContent;
+            
+            if (!code.trim()) {
+                showNotification("No minified code to copy!");
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                showNotification("Minified code copied to clipboard!");
+            } catch (err) {
+                showNotification("Failed to copy code. Please try again.");
+                console.error('Failed to copy: ', err);
+            }
+        }
+        
+        // Download minified code as a file
+        function downloadMinifiedCode() {
+            const code = outputCode.textContent;
+            
+            if (!code.trim()) {
+                showNotification("No minified code to download!");
+                return;
+            }
+            
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'minified.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification("Minified HTML downloaded as minified.html");
+        }
+        
+        // Swap input and output code
+        function swapCode() {
+            const input = inputCode.value;
+            const output = outputCode.textContent;
+            
+            if (!output.trim()) {
+                showNotification("No minified code to swap!");
+                return;
+            }
+            
+            inputCode.value = output;
+            outputCode.textContent = input;
+            
+            updateCounts();
+            processMinification();
+            
+            showNotification("Code swapped successfully!");
+        }
+        
+        // Set preset example
+        function setPresetExample(presetType) {
+            let code = '';
+            
+            switch(presetType) {
+                case 'basic':
+                    code = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic HTML Page</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0066ff, #4d94ff);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to My Website</h1>
+            <p>A simple, clean HTML template</p>
+        </header>
+        
+        <main class="content">
+            <h2>About This Template</h2>
+            <p>This is a basic HTML template with CSS styling. It demonstrates common HTML structure and elements.</p>
+            
+            <section>
+                <h3>Features</h3>
+                <ul>
+                    <li>Responsive design</li>
+                    <li>Clean, modern styling</li>
+                    <li>Semantic HTML5 elements</li>
+                    <li>CSS gradient header</li>
+                </ul>
+            </section>
+        </main>
+        
+        <footer style="margin-top: 30px; text-align: center; color: #666;">
+            <p>&copy; 2023 My Website. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>`;
+                    break;
+                case 'bootstrap':
+                    code = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <title>Bootstrap Page Example</title>
+    
+    <style>
+        /* Custom CSS */
+        .hero-section {
+            background: linear-gradient(135deg, #0066ff, #4d94ff);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #0066ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .feature-icon i {
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card {
+            transition: transform 0.3s;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                <i class="fas fa-rocket me-2"></i>BrandName
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3">Build Amazing Websites</h1>
+                    <p class="lead mb-4">Create responsive, mobile-first projects on the web with Bootstrap and our HTML minifier tool.</p>
+                    <a href="#" class="btn btn-light btn-lg px-4">Get Started</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <i class="fas fa-laptop-code" style="font-size: 200px; opacity: 0.8;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="container py-5">
+        <h2 class="text-center mb-5">Why Choose Our Tool</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Fast Processing</h4>
+                    <p>Minify your HTML in milliseconds with our optimized algorithm.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Secure</h4>
+                    <p>All processing happens locally in your browser. No data sent to servers.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h4>Developer Friendly</h4>
+                    <p>Clean interface with syntax highlighting and multiple options.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2023 QuickPDFTool. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>`;
+                    break;
+                case 'form':
+                    code = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Example</title>
+    <style>
+        /* Form styling */
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.1);
+        }
+        
+        .form-title {
+            color: #0066ff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+        
+        .btn-submit {
+            background: #0066ff;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn-submit:hover {
+            background: #0052cc;
+        }
+        
+        .required {
+            color: #ef4444;
+        }
+        
+        .success-message {
+            display: none;
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-title">Contact Us</h2>
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name" class="form-label">
+                    Full Name <span class="required">*</span>
+                </label>
+                <input type="text" id="name" class="form-control" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    Email Address <span class="required">*</span>
+                </label>
+                <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject" class="form-label">Subject</label>
+                <select id="subject" class="form-control">
+                    <option value="">Select a subject</option>
+                    <option value="support">Technical Support</option>
+                    <option value="sales">Sales Inquiry</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message" class="form-label">
+                    Message <span class="required">*</span>
+                </label>
+                <textarea id="message" class="form-control" rows="5" placeholder="Enter your message..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn-submit">Send Message</button>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                Thank you! Your message has been sent successfully.
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simple validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            if (name && email && message) {
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('contactForm').reset();
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>`;
+                    break;
+                case 'clear':
+                    code = '';
+                    break;
+            }
+            
+            inputCode.value = code;
+            updateCounts();
+            processMinification();
+            
+            if (presetType !== 'clear') {
+                showNotification(`Loaded ${presetType} template`);
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize event listeners
+        function initHTMLMinifier() {
+            // Initialize with default code
+            updateCounts();
+            processMinification();
+            
+            // Input code events
+            inputCode.addEventListener('input', updateCounts);
+            
+            // Option changes
+            [removeSpaces, removeLineBreaks, removeComments, preserveInline].forEach(option => {
+                option.addEventListener('change', processMinification);
+            });
+            
+            // Minify button
+            minifyButton.addEventListener('click', processMinification);
+            
+            // Clear button
+            clearButton.addEventListener('click', clearAllCode);
+            
+            // Paste button
+            pasteButton.addEventListener('click', pasteFromClipboard);
+            
+            // Format button
+            formatButton.addEventListener('click', formatCode);
+            
+            // Copy button
+            copyButton.addEventListener('click', copyMinifiedCode);
+            
+            // Download button
+            downloadButton.addEventListener('click', downloadMinifiedCode);
+            
+            // Swap button
+            swapButton.addEventListener('click', swapCode);
+            
+            // Example buttons
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const presetType = button.getAttribute('data-preset');
+                    setPresetExample(presetType);
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + M to minify
+                if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+                    e.preventDefault();
+                    processMinification();
+                }
+                
+                // Ctrl/Cmd + C to copy minified code
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement !== inputCode) {
+                    copyMinifiedCode();
+                }
+                
+                // Ctrl/Cmd + V to paste (when input is focused)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'v' && document.activeElement === inputCode) {
+                    // Let the default paste happen first, then process
+                    setTimeout(() => {
+                        updateCounts();
+                        processMinification();
+                    }, 100);
+                }
+                
+                // Ctrl/Cmd + F to format
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    formatCode();
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearAllCode();
+                }
+            });
+            
+            // Auto-minify on input (with debounce)
+            let minifyTimeout;
+            inputCode.addEventListener('input', () => {
+                clearTimeout(minifyTimeout);
+                minifyTimeout = setTimeout(processMinification, 800);
+            });
+        }
+        
+        // Initialize HTML minifier when page loads
+        document.addEventListener('DOMContentLoaded', initHTMLMinifier);
+    </script>
+</body>
+</html>

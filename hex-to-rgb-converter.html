@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEX to RGB Converter - QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 20px rgba(13, 71, 161, 0.15);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .converter-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .converter-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e1e8ed;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #1e88e5;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f7ff;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1e88e5;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: border-color 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+
+        .hex-prefix {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .color-preview-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border-left: 5px solid #1e88e5;
+        }
+
+        .color-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-right: 25px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .color-info {
+            flex-grow: 1;
+        }
+
+        .color-info h3 {
+            color: #1e88e5;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .color-codes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .code-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .code-label {
+            font-weight: 600;
+            color: #1e88e5;
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .code-value {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+            padding-left: 10px;
+            flex-grow: 1;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .btn-primary {
+            background-color: #1e88e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d47a1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #f1f8ff;
+            color: #1e88e5;
+            border: 1px solid #1e88e5;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+
+        .instructions {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .instructions h3 {
+            color: #1e88e5;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .instructions p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .example-item {
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .example-item:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(30, 136, 229, 0.1);
+        }
+
+        .example-hex {
+            font-weight: 700;
+            color: #1e88e5;
+            margin-bottom: 5px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .example-rgb {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .action-status {
+            display: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recent-conversions {
+            margin-top: 30px;
+        }
+
+        .recent-colors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .recent-color {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .recent-color:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .recent-color-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            margin-bottom: 5px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .recent-color:hover .recent-color-tooltip {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn {
+                min-width: 120px;
+                padding: 12px 18px;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            .color-preview-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .color-preview {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .code-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .code-label {
+                width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                width: 100%;
+            }
+            
+            .examples {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h1>HEX to RGB Converter</h1>
+            <p class="tagline">Instantly convert HEX color codes to RGB values with our fast, accurate color converter. Perfect for web design and digital projects.</p>
+        </header>
+
+        <main>
+            <div class="converter-wrapper">
+                <div class="section">
+                    <h2 class="section-title"><i class="fas fa-palette"></i> HEX Input</h2>
+                    
+                    <div class="input-group">
+                        <label for="hexInput">Enter HEX Color Code:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <span class="hex-prefix">#</span>
+                            <input type="text" id="hexInput" class="text-input" placeholder="1e88e5" maxlength="6" autocomplete="off">
+                        </div>
+                        <div style="font-size: 0.9rem; color: #777; margin-top: 8px;">
+                            Enter 3 or 6 digit HEX code (with or without #)
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button id="convertBtn" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Convert
+                        </button>
+                        <button id="clearBtn" class="btn btn-secondary">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+
+                    <div class="recent-conversions">
+                        <h3 class="section-title" style="border-bottom: none; margin-bottom: 10px; font-size: 1.2rem;">
+                            <i class="fas fa-history"></i> Recent Conversions
+                        </h3>
+                        <div class="recent-colors-grid" id="recentColorsGrid">
+                            <!-- Recent colors will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title"><i class="fas fa-eye-dropper"></i> Color Output</h2>
+                    
+                    <div class="color-preview-container">
+                        <div class="color-preview" id="colorPreview"></div>
+                        <div class="color-info">
+                            <h3 id="colorName">QuickPDF Blue</h3>
+                            <div class="color-codes">
+                                <div class="code-item">
+                                    <div class="code-label">HEX:</div>
+                                    <div class="code-value" id="hexOutput">#1E88E5</div>
+                                </div>
+                                <div class="code-item">
+                                    <div class="code-label">RGB:</div>
+                                    <div class="code-value" id="rgbOutput">rgb(30, 136, 229)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button id="copyBtn" class="btn btn-success">
+                            <i class="fas fa-copy"></i> Copy RGB
+                        </button>
+                    </div>
+
+                    <div id="actionStatus" class="action-status"></div>
+
+                    <div style="margin-top: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
+                        <p style="margin-bottom: 10px; font-weight: 600; color: #1e88e5;">
+                            <i class="fas fa-lightbulb"></i> Color Information
+                        </p>
+                        <p style="font-size: 0.9rem; color: #666;">
+                            <strong>HEX:</strong> A 6-digit hexadecimal representation of a color, commonly used in web design.<br>
+                            <strong>RGB:</strong> Red, Green, Blue values each ranging from 0 to 255, used for digital displays.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3><i class="fas fa-graduation-cap"></i> How to Use the HEX to RGB Converter</h3>
+                <p>This tool makes it easy to convert HEX color codes to RGB values. Follow these simple steps:</p>
+                <ol style="padding-left: 20px; margin-bottom: 20px; color: #555;">
+                    <li><strong>Enter a HEX code</strong> in the input field (with or without the # symbol).</li>
+                    <li><strong>Click "Convert"</strong> or press Enter to instantly convert the HEX code to RGB.</li>
+                    <li><strong>View the results</strong> with a color preview and both HEX and RGB values displayed.</li>
+                    <li><strong>Copy the RGB value</strong> to your clipboard with the "Copy RGB" button.</li>
+                    <li><strong>Use the clear button</strong> to reset the converter and start over.</li>
+                </ol>
+                
+                <h4 style="color: #1e88e5; margin-top: 20px; margin-bottom: 15px;">Try These Examples:</h4>
+                <div class="examples">
+                    <div class="example-item" data-hex="1e88e5">
+                        <div class="example-hex">#1E88E5</div>
+                        <div class="example-rgb">QuickPDF Blue</div>
+                    </div>
+                    <div class="example-item" data-hex="4caf50">
+                        <div class="example-hex">#4CAF50</div>
+                        <div class="example-rgb">Material Green</div>
+                    </div>
+                    <div class="example-item" data-hex="ff9800">
+                        <div class="example-hex">#FF9800</div>
+                        <div class="example-rgb">Material Orange</div>
+                    </div>
+                    <div class="example-item" data-hex="9c27b0">
+                        <div class="example-hex">#9C27B0</div>
+                        <div class="example-rgb">Material Purple</div>
+                    </div>
+                    <div class="example-item" data-hex="f44336">
+                        <div class="example-hex">#F44336</div>
+                        <div class="example-rgb">Material Red</div>
+                    </div>
+                    <div class="example-item" data-hex="333333">
+                        <div class="example-hex">#333333</div>
+                        <div class="example-rgb">Dark Gray</div>
+                    </div>
+                    <div class="example-item" data-hex="ffffff">
+                        <div class="example-hex">#FFFFFF</div>
+                        <div class="example-rgb">White</div>
+                    </div>
+                    <div class="example-item" data-hex="000000">
+                        <div class="example-hex">#000000</div>
+                        <div class="example-rgb">Black</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2023 QuickPDFTool - HEX to RGB Converter Tool. All rights reserved.</p>
+            <p>This tool helps designers and developers convert color formats for web and digital projects.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const hexInput = document.getElementById('hexInput');
+            const convertBtn = document.getElementById('convertBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const hexOutput = document.getElementById('hexOutput');
+            const rgbOutput = document.getElementById('rgbOutput');
+            const colorPreview = document.getElementById('colorPreview');
+            const colorName = document.getElementById('colorName');
+            const actionStatus = document.getElementById('actionStatus');
+            const recentColorsGrid = document.getElementById('recentColorsGrid');
+            const exampleItems = document.querySelectorAll('.example-item');
+            
+            let currentHex = '#1e88e5';
+            let currentRgb = 'rgb(30, 136, 229)';
+            let recentColors = [];
+            const MAX_RECENT_COLORS = 8;
+            
+            // Initialize with default color
+            updateDisplay('#1e88e5');
+            
+            // Convert button click event
+            convertBtn.addEventListener('click', convertHex);
+            
+            // Clear button click event
+            clearBtn.addEventListener('click', clearInput);
+            
+            // Copy button click event
+            copyBtn.addEventListener('click', copyRgb);
+            
+            // Handle Enter key in input field
+            hexInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    convertHex();
+                }
+            });
+            
+            // Handle real-time validation and conversion
+            hexInput.addEventListener('input', function() {
+                const value = hexInput.value.trim();
+                
+                // Remove # if present
+                const cleanValue = value.replace('#', '');
+                
+                // Validate input as user types
+                if (cleanValue.length === 3 || cleanValue.length === 6) {
+                    // Check if valid hex characters
+                    if (/^[0-9A-Fa-f]+$/.test(cleanValue)) {
+                        hexInput.style.borderColor = '#4caf50';
+                    } else {
+                        hexInput.style.borderColor = '#f44336';
+                    }
+                } else {
+                    hexInput.style.borderColor = '#e3f2fd';
+                }
+            });
+            
+            // Example items click events
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const hex = this.getAttribute('data-hex');
+                    hexInput.value = hex;
+                    convertHex();
+                });
+            });
+            
+            // Convert HEX to RGB
+            function convertHex() {
+                let hex = hexInput.value.trim();
+                
+                // If empty, show error
+                if (!hex) {
+                    showStatus('Please enter a HEX color code.', 'error');
+                    hexInput.style.borderColor = '#f44336';
+                    return;
+                }
+                
+                // Remove # if present
+                hex = hex.replace('#', '');
+                
+                // Validate HEX format
+                if (!isValidHex(hex)) {
+                    showStatus('Invalid HEX code. Please enter a valid 3 or 6 digit HEX color.', 'error');
+                    hexInput.style.borderColor = '#f44336';
+                    return;
+                }
+                
+                // Convert 3-digit HEX to 6-digit
+                if (hex.length === 3) {
+                    hex = hex.split('').map(char => char + char).join('');
+                }
+                
+                // Convert to uppercase for consistency
+                hex = hex.toUpperCase();
+                
+                // Convert HEX to RGB
+                const rgb = hexToRgb(hex);
+                
+                // Update display
+                updateDisplay(hex, rgb);
+                
+                // Add to recent colors
+                addToRecentColors(hex, rgb);
+                
+                // Show success message
+                showStatus(`Successfully converted #${hex} to RGB(${rgb.r}, ${rgb.g}, ${rgb.b})`, 'success');
+            }
+            
+            // Update display with new color
+            function updateDisplay(hex, rgb = null) {
+                // If rgb not provided, calculate it
+                if (!rgb) {
+                    rgb = hexToRgb(hex);
+                }
+                
+                // Update current values
+                currentHex = '#' + hex;
+                currentRgb = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                
+                // Update UI elements
+                hexOutput.textContent = '#' + hex;
+                rgbOutput.textContent = currentRgb;
+                colorPreview.style.backgroundColor = '#' + hex;
+                
+                // Update color name
+                const name = getColorName(rgb.r, rgb.g, rgb.b);
+                colorName.textContent = name;
+                
+                // Update input field
+                hexInput.value = hex;
+                hexInput.style.borderColor = '#4caf50';
+            }
+            
+            // Convert HEX to RGB object
+            function hexToRgb(hex) {
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                
+                return { r, g, b };
+            }
+            
+            // Validate HEX code
+            function isValidHex(hex) {
+                // Check if 3 or 6 characters
+                if (hex.length !== 3 && hex.length !== 6) {
+                    return false;
+                }
+                
+                // Check if valid hex characters
+                return /^[0-9A-Fa-f]+$/.test(hex);
+            }
+            
+            // Get color name based on RGB values
+            function getColorName(r, g, b) {
+                // Common color names mapping
+                const colors = [
+                    {name: "QuickPDF Blue", r: 30, g: 136, b: 229, threshold: 30},
+                    {name: "White", r: 255, g: 255, b: 255, threshold: 30},
+                    {name: "Black", r: 0, g: 0, b: 0, threshold: 30},
+                    {name: "Red", r: 255, g: 0, b: 0, threshold: 50},
+                    {name: "Green", r: 0, g: 255, b: 0, threshold: 50},
+                    {name: "Blue", r: 0, g: 0, b: 255, threshold: 50},
+                    {name: "Yellow", r: 255, g: 255, b: 0, threshold: 50},
+                    {name: "Cyan", r: 0, g: 255, b: 255, threshold: 50},
+                    {name: "Magenta", r: 255, g: 0, b: 255, threshold: 50},
+                    {name: "Orange", r: 255, g: 165, b: 0, threshold: 50},
+                    {name: "Purple", r: 128, g: 0, b: 128, threshold: 50},
+                    {name: "Pink", r: 255, g: 192, b: 203, threshold: 50},
+                    {name: "Brown", r: 165, g: 42, b: 42, threshold: 50},
+                    {name: "Gray", r: 128, g: 128, b: 128, threshold: 30}
+                ];
+                
+                // Find the closest color
+                let closestColor = {name: "Custom Color", distance: Infinity};
+                
+                for (const color of colors) {
+                    const distance = Math.sqrt(
+                        Math.pow(r - color.r, 2) + 
+                        Math.pow(g - color.g, 2) + 
+                        Math.pow(b - color.b, 2)
+                    );
+                    
+                    if (distance < closestColor.distance) {
+                        closestColor = {name: color.name, distance: distance};
+                    }
+                }
+                
+                // If close enough, use the color name
+                for (const color of colors) {
+                    if (closestColor.name === color.name && closestColor.distance <= color.threshold) {
+                        return color.name;
+                    }
+                }
+                
+                // Otherwise return a descriptive name based on brightness
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                if (brightness < 50) return "Dark Color";
+                if (brightness > 200) return "Light Color";
+                return "Custom Color";
+            }
+            
+            // Add color to recent colors
+            function addToRecentColors(hex, rgb) {
+                const colorData = {
+                    hex: hex,
+                    r: rgb.r,
+                    g: rgb.g,
+                    b: rgb.b
+                };
+                
+                // Check if color already exists in recent colors
+                const existingIndex = recentColors.findIndex(color => color.hex === hex);
+                
+                // If exists, remove it (will be added to the front)
+                if (existingIndex !== -1) {
+                    recentColors.splice(existingIndex, 1);
+                }
+                
+                // Add to beginning of array
+                recentColors.unshift(colorData);
+                
+                // Limit to max number of recent colors
+                if (recentColors.length > MAX_RECENT_COLORS) {
+                    recentColors.pop();
+                }
+                
+                // Update recent colors display
+                updateRecentColorsDisplay();
+            }
+            
+            // Update recent colors display
+            function updateRecentColorsDisplay() {
+                // Clear current display
+                recentColorsGrid.innerHTML = '';
+                
+                // Add each recent color
+                recentColors.forEach(color => {
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'recent-color';
+                    colorDiv.style.backgroundColor = '#' + color.hex;
+                    
+                    // Add tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'recent-color-tooltip';
+                    tooltip.textContent = '#' + color.hex;
+                    colorDiv.appendChild(tooltip);
+                    
+                    // Click to select this color
+                    colorDiv.addEventListener('click', function() {
+                        hexInput.value = color.hex;
+                        updateDisplay(color.hex, color);
+                        showStatus(`Color #${color.hex} loaded from recent colors.`, 'success');
+                    });
+                    
+                    recentColorsGrid.appendChild(colorDiv);
+                });
+            }
+            
+            // Clear input and reset
+            function clearInput() {
+                hexInput.value = '';
+                hexInput.style.borderColor = '#e3f2fd';
+                updateDisplay('1e88e5');
+                showStatus('Input cleared. Ready for new conversion.', 'success');
+            }
+            
+            // Copy RGB to clipboard
+            function copyRgb() {
+                const textToCopy = currentRgb;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showStatus('RGB value copied to clipboard!', 'success');
+                }).catch(err => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showStatus('RGB value copied to clipboard!', 'success');
+                });
+            }
+            
+            // Show status message
+            function showStatus(message, type) {
+                actionStatus.textContent = message;
+                actionStatus.className = 'action-status';
+                actionStatus.classList.add(`status-${type}`);
+                actionStatus.style.display = 'block';
+                
+                // Auto-hide status after 3 seconds
+                setTimeout(() => {
+                    actionStatus.style.display = 'none';
+                }, 3000);
+            }
+            
+            // Initialize with some recent colors for demo
+            const demoColors = [
+                {hex: '4caf50', r: 76, g: 175, b: 80},
+                {hex: 'ff9800', r: 255, g: 152, b: 0},
+                {hex: '9c27b0', r: 156, g: 39, b: 176},
+                {hex: 'f44336', r: 244, g: 67, b: 54}
+            ];
+            
+            demoColors.forEach(color => {
+                recentColors.push(color);
+            });
+            
+            updateRecentColorsDisplay();
+        });
+    </script>
+</body>
+</html>

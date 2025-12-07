@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Case Converter | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --light-blue: #4d94ff;
+            --lighter-blue: #e6f0ff;
+            --dark-blue: #0052cc;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5eb;
+            --dark-gray: #666666;
+            --shadow: rgba(0, 102, 255, 0.15);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .converter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .input-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-input-container {
+            margin-bottom: 25px;
+        }
+
+        .text-input-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .char-count {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow);
+        }
+
+        .paste-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--lighter-blue);
+            color: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .paste-button:hover {
+            background-color: var(--light-blue);
+            color: white;
+        }
+
+        .conversion-options {
+            margin-bottom: 30px;
+        }
+
+        .conversion-options h3 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-button {
+            padding: 18px 15px;
+            background-color: var(--lighter-blue);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .option-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .option-button.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+        }
+
+        .option-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 120px;
+            padding: 16px 15px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+        }
+
+        .action-button.secondary:hover {
+            background-color: var(--medium-gray);
+        }
+
+        .action-button.success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .action-button.success:hover {
+            background-color: #0da271;
+        }
+
+        .result-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .result-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-container {
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid var(--light-blue);
+            position: relative;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-button {
+            background-color: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-button:hover {
+            background-color: #0da271;
+        }
+
+        .copy-button.copied {
+            background-color: var(--primary-blue);
+        }
+
+        .result-text {
+            min-height: 200px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .conversion-info {
+            margin-top: 30px;
+        }
+
+        .conversion-info h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-card {
+            background-color: var(--lighter-blue);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .examples-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 20px;
+        }
+
+        .examples-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .example-card {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--success-green);
+        }
+
+        .example-card h4 {
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .example-card p {
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .example-text {
+            background-color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        @media (max-width: 992px) {
+            .converter-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-section, .result-section {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section, .result-section, .examples-section {
+                padding: 25px;
+            }
+            
+            .options-grid, .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-section, .result-section, .examples-section {
+                padding: 20px;
+            }
+            
+            textarea, .result-text {
+                min-height: 150px;
+                font-size: 1rem;
+            }
+            
+            .option-button {
+                padding: 15px 10px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .preset-examples {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--lighter-blue);
+            border-radius: 10px;
+        }
+
+        .preset-examples h4 {
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .preset-button {
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .preset-button:hover {
+            background-color: var(--light-blue);
+            color: white;
+            border-color: var(--light-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-text-height"></i> Text Case Converter</h1>
+        <p>Instantly convert text between different case styles: uppercase, lowercase, title case, sentence case, and more. Perfect for formatting text for documents, websites, or social media.</p>
+    </div>
+    
+    <div class="converter-container">
+        <div class="input-section">
+            <h2><i class="fas fa-edit"></i> Input Text</h2>
+            
+            <div class="text-input-container">
+                <label>
+                    Enter or paste your text below
+                    <span class="char-count"><span id="charCount">0</span> characters</span>
+                </label>
+                <div class="textarea-wrapper">
+                    <textarea id="inputText" placeholder="Type or paste your text here...">Hello World! This is a Sample text for CASE conversion. Try converting it to different text cases.</textarea>
+                    <button class="paste-button" id="pasteButton">
+                        <i class="fas fa-paste"></i> Paste
+                    </button>
+                </div>
+            </div>
+            
+            <div class="conversion-options">
+                <h3><i class="fas fa-exchange-alt"></i> Conversion Options</h3>
+                <div class="options-grid">
+                    <div class="option-button active" data-case="upper">
+                        <div class="option-icon">
+                            <i class="fas fa-text-height"></i>
+                        </div>
+                        <div class="option-name">UPPERCASE</div>
+                    </div>
+                    
+                    <div class="option-button" data-case="lower">
+                        <div class="option-icon">
+                            <i class="fas fa-text-width"></i>
+                        </div>
+                        <div class="option-name">lowercase</div>
+                    </div>
+                    
+                    <div class="option-button" data-case="title">
+                        <div class="option-icon">
+                            <i class="fas fa-heading"></i>
+                        </div>
+                        <div class="option-name">Title Case</div>
+                    </div>
+                    
+                    <div class="option-button" data-case="sentence">
+                        <div class="option-icon">
+                            <i class="fas fa-paragraph"></i>
+                        </div>
+                        <div class="option-name">Sentence case</div>
+                    </div>
+                    
+                    <div class="option-button" data-case="toggle">
+                        <div class="option-icon">
+                            <i class="fas fa-random"></i>
+                        </div>
+                        <div class="option-name">tOGGLE cASE</div>
+                    </div>
+                    
+                    <div class="option-button" data-case="capitalize">
+                        <div class="option-icon">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="option-name">Capitalize Words</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preset-examples">
+                <h4><i class="fas fa-lightbulb"></i> Try These Examples</h4>
+                <div class="preset-buttons">
+                    <button class="preset-button" data-preset="lorem">Lorem Ipsum</button>
+                    <button class="preset-button" data-preset="email">Email Template</button>
+                    <button class="preset-button" data-preset="code">Code Snippet</button>
+                    <button class="preset-button" data-preset="clear">Clear Text</button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button primary" id="convertButton">
+                    <i class="fas fa-sync-alt"></i> Convert Text
+                </button>
+                <button class="action-button secondary" id="clearButton">
+                    <i class="fas fa-eraser"></i> Clear All
+                </button>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <h2><i class="fas fa-file-alt"></i> Converted Text</h2>
+            
+            <div class="result-container">
+                <div class="result-header">
+                    <div class="result-title">
+                        <i class="fas fa-text-height"></i>
+                        <span id="currentCase">UPPERCASE</span> Result
+                    </div>
+                    <button class="copy-button" id="copyButton">
+                        <i class="far fa-copy"></i> Copy Text
+                    </button>
+                </div>
+                <div class="result-text" id="outputText">
+HELLO WORLD! THIS IS A SAMPLE TEXT FOR CASE CONVERSION. TRY CONVERTING IT TO DIFFERENT TEXT CASES.
+                </div>
+            </div>
+            
+            <div class="conversion-info">
+                <h3><i class="fas fa-chart-bar"></i> Text Statistics</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-value" id="wordCount">0</div>
+                        <div class="info-label">Words</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-value" id="lineCount">0</div>
+                        <div class="info-label">Lines</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-value" id="charCountResult">0</div>
+                        <div class="info-label">Characters</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-value" id="sentenceCount">0</div>
+                        <div class="info-label">Sentences</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="examples-section">
+        <h2><i class="fas fa-lightbulb"></i> Case Conversion Examples</h2>
+        <div class="examples-grid">
+            <div class="example-card">
+                <h4><i class="fas fa-text-height"></i> UPPERCASE</h4>
+                <p>Converts all letters to uppercase. Useful for headings, titles, or emphasis.</p>
+                <div class="example-text">Original: hello world → UPPERCASE: HELLO WORLD</div>
+            </div>
+            
+            <div class="example-card">
+                <h4><i class="fas fa-text-width"></i> lowercase</h4>
+                <p>Converts all letters to lowercase. Useful for normalizing text or code.</p>
+                <div class="example-text">Original: Hello World → lowercase: hello world</div>
+            </div>
+            
+            <div class="example-card">
+                <h4><i class="fas fa-heading"></i> Title Case</h4>
+                <p>Capitalizes the first letter of each word. Useful for titles, headings, and proper nouns.</p>
+                <div class="example-text">Original: hello world → Title Case: Hello World</div>
+            </div>
+            
+            <div class="example-card">
+                <h4><i class="fas fa-paragraph"></i> Sentence case</h4>
+                <p>Capitalizes the first letter of each sentence. Useful for normal paragraphs.</p>
+                <div class="example-text">Original: hello. world! → Sentence case: Hello. World!</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><i class="fas fa-text-height"></i> Text Case Converter Tool - Part of QuickPDFTool | © 2023 All Rights Reserved</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">This tool works entirely in your browser. Your text is never sent to any server.</p>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Text copied to clipboard!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const charCount = document.getElementById('charCount');
+        const charCountResult = document.getElementById('charCountResult');
+        const wordCount = document.getElementById('wordCount');
+        const lineCount = document.getElementById('lineCount');
+        const sentenceCount = document.getElementById('sentenceCount');
+        const currentCase = document.getElementById('currentCase');
+        
+        const optionButtons = document.querySelectorAll('.option-button');
+        const convertButton = document.getElementById('convertButton');
+        const clearButton = document.getElementById('clearButton');
+        const copyButton = document.getElementById('copyButton');
+        const pasteButton = document.getElementById('pasteButton');
+        const presetButtons = document.querySelectorAll('.preset-button');
+        
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        
+        // State variables
+        let currentCaseType = 'upper';
+        let conversionHistory = [];
+        
+        // Initialize with default text
+        const defaultText = "Hello World! This is a Sample text for CASE conversion. Try converting it to different text cases.";
+        
+        // Update character count
+        function updateCharCount() {
+            const text = inputText.value;
+            const count = text.length;
+            charCount.textContent = count;
+            charCountResult.textContent = count;
+        }
+        
+        // Update text statistics
+        function updateTextStats() {
+            const text = inputText.value;
+            
+            // Word count
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            wordCount.textContent = words.length;
+            
+            // Line count
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+            lineCount.textContent = lines.length;
+            
+            // Sentence count (approximate)
+            const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+            sentenceCount.textContent = sentences.length;
+        }
+        
+        // Convert to uppercase
+        function toUppercase(text) {
+            return text.toUpperCase();
+        }
+        
+        // Convert to lowercase
+        function toLowercase(text) {
+            return text.toLowerCase();
+        }
+        
+        // Convert to title case
+        function toTitleCase(text) {
+            return text.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+        
+        // Convert to sentence case
+        function toSentenceCase(text) {
+            return text.replace(/(^\s*\w|[.!?]\s+\w)/g, function(c) {
+                return c.toUpperCase();
+            });
+        }
+        
+        // Convert to toggle case
+        function toToggleCase(text) {
+            return text.split('').map((char, index) => {
+                return index % 2 === 0 ? char.toLowerCase() : char.toUpperCase();
+            }).join('');
+        }
+        
+        // Capitalize each word
+        function capitalizeWords(text) {
+            return text.replace(/\b\w/g, function(char) {
+                return char.toUpperCase();
+            });
+        }
+        
+        // Perform conversion based on selected case type
+        function convertText() {
+            const text = inputText.value;
+            let result = text;
+            
+            switch(currentCaseType) {
+                case 'upper':
+                    result = toUppercase(text);
+                    currentCase.textContent = "UPPERCASE";
+                    break;
+                case 'lower':
+                    result = toLowercase(text);
+                    currentCase.textContent = "lowercase";
+                    break;
+                case 'title':
+                    result = toTitleCase(text);
+                    currentCase.textContent = "Title Case";
+                    break;
+                case 'sentence':
+                    result = toSentenceCase(text);
+                    currentCase.textContent = "Sentence case";
+                    break;
+                case 'toggle':
+                    result = toToggleCase(text);
+                    currentCase.textContent = "tOGGLE cASE";
+                    break;
+                case 'capitalize':
+                    result = capitalizeWords(text);
+                    currentCase.textContent = "Capitalized";
+                    break;
+                default:
+                    result = text;
+            }
+            
+            outputText.textContent = result;
+            updateCharCount();
+            updateTextStats();
+            
+            // Add to history
+            addToHistory(text, result, currentCaseType);
+        }
+        
+        // Add conversion to history
+        function addToHistory(original, converted, caseType) {
+            const historyItem = {
+                original,
+                converted,
+                caseType,
+                timestamp: new Date()
+            };
+            
+            conversionHistory.unshift(historyItem);
+            
+            // Keep only last 5 items
+            if (conversionHistory.length > 5) {
+                conversionHistory.pop();
+            }
+        }
+        
+        // Copy text to clipboard
+        async function copyToClipboard() {
+            const text = outputText.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification("Text copied to clipboard!");
+                
+                // Visual feedback
+                copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                copyButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="far fa-copy"></i> Copy Text';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                showNotification("Failed to copy text. Please try again.");
+                console.error('Failed to copy: ', err);
+            }
+        }
+        
+        // Paste text from clipboard
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputText.value = text;
+                convertText();
+                showNotification("Text pasted from clipboard!");
+            } catch (err) {
+                showNotification("Unable to paste. Please paste manually.");
+                console.error('Failed to paste: ', err);
+            }
+        }
+        
+        // Clear all text
+        function clearAllText() {
+            inputText.value = '';
+            outputText.textContent = '';
+            updateCharCount();
+            updateTextStats();
+            showNotification("All text cleared!");
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Set preset examples
+        function setPresetExample(presetType) {
+            let text = '';
+            
+            switch(presetType) {
+                case 'lorem':
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+                    break;
+                case 'email':
+                    text = "Dear Team,\n\nI hope this email finds you well. I wanted to follow up on our recent project meeting.\n\nPlease review the attached documents and provide your feedback by Friday.\n\nBest regards,\nJohn Doe";
+                    break;
+                case 'code':
+                    text = "function convertToUpperCase(text) {\n  return text.toUpperCase();\n}\n\nconst result = convertToUpperCase('hello world');\nconsole.log(result); // Output: HELLO WORLD";
+                    break;
+                case 'clear':
+                    text = '';
+                    break;
+            }
+            
+            inputText.value = text;
+            convertText();
+            
+            if (presetType !== 'clear') {
+                showNotification(`Loaded ${presetType} example`);
+            }
+        }
+        
+        // Initialize event listeners
+        function initConverter() {
+            // Update character count initially
+            updateCharCount();
+            updateTextStats();
+            convertText();
+            
+            // Input text events
+            inputText.addEventListener('input', () => {
+                updateCharCount();
+                updateTextStats();
+                convertText();
+            });
+            
+            // Option button events
+            optionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    optionButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update current case type
+                    currentCaseType = button.getAttribute('data-case');
+                    
+                    // Convert text
+                    convertText();
+                });
+            });
+            
+            // Convert button
+            convertButton.addEventListener('click', convertText);
+            
+            // Clear button
+            clearButton.addEventListener('click', clearAllText);
+            
+            // Copy button
+            copyButton.addEventListener('click', copyToClipboard);
+            
+            // Paste button
+            pasteButton.addEventListener('click', pasteFromClipboard);
+            
+            // Preset buttons
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const presetType = button.getAttribute('data-preset');
+                    setPresetExample(presetType);
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + Enter to convert
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    convertText();
+                }
+                
+                // Ctrl/Cmd + C to copy (when output is focused)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement !== inputText) {
+                    copyToClipboard();
+                }
+                
+                // Ctrl/Cmd + V to paste (when input is focused)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'v' && document.activeElement === inputText) {
+                    // Let the default paste happen first, then convert
+                    setTimeout(convertText, 100);
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearAllText();
+                }
+            });
+            
+            // Auto-convert on input
+            let conversionTimeout;
+            inputText.addEventListener('input', () => {
+                clearTimeout(conversionTimeout);
+                conversionTimeout = setTimeout(convertText, 300);
+            });
+        }
+        
+        // Initialize converter when page loads
+        document.addEventListener('DOMContentLoaded', initConverter);
+    </script>
+</body>
+</html>

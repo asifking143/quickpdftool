@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Color Picker | QuickPDFTool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --light-blue: #4d94ff;
+            --lighter-blue: #e6f0ff;
+            --dark-blue: #0052cc;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5eb;
+            --dark-gray: #666666;
+            --shadow: rgba(0, 102, 255, 0.15);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --purple: #8b5cf6;
+            --code-bg: #1e1e1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .upload-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .upload-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-container {
+            margin-bottom: 25px;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--medium-gray);
+            border-radius: 15px;
+            padding: 60px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--lighter-blue);
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(0, 102, 255, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--success-green);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .upload-text h3 {
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .upload-text p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .upload-button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .image-preview-container {
+            margin-top: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--medium-gray);
+            display: none;
+            position: relative;
+        }
+
+        .image-preview-container.active {
+            display: block;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: crosshair;
+            max-height: 400px;
+            object-fit: contain;
+            background-color: #f0f0f0;
+        }
+
+        .cursor-info {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 10;
+            display: none;
+        }
+
+        .cursor-info.active {
+            display: block;
+        }
+
+        .zoom-container {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 2px solid white;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+
+        .zoom-container.active {
+            display: block;
+        }
+
+        .zoom-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls-section {
+            margin-top: 30px;
+        }
+
+        .controls-section h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            flex: 1;
+            min-width: 140px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .action-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+        }
+
+        .action-button.secondary:hover {
+            background-color: var(--medium-gray);
+        }
+
+        .action-button.success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .action-button.success:hover {
+            background-color: #0da271;
+        }
+
+        .sample-images {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+        }
+
+        .sample-images h4 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sample-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .sample-image {
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .sample-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow);
+            border-color: var(--primary-blue);
+        }
+
+        .sample-image img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .results-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 35px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .results-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-preview-container {
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 2px solid var(--light-blue);
+        }
+
+        .color-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            border: 5px solid white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .color-info {
+            margin-bottom: 20px;
+        }
+
+        .color-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+
+        .color-coordinates {
+            font-size: 1rem;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .color-formats {
+            margin-top: 30px;
+        }
+
+        .color-formats h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .format-card {
+            background-color: var(--lighter-blue);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .format-card.hex {
+            border-left-color: var(--success-green);
+        }
+
+        .format-card.rgb {
+            border-left-color: var(--warning-orange);
+        }
+
+        .format-card.hsl {
+            border-left-color: var(--purple);
+        }
+
+        .format-label {
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .format-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            word-break: break-all;
+        }
+
+        .copy-button {
+            background-color: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .copy-button:hover {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .copy-button.copied {
+            background-color: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .color-history {
+            margin-top: 30px;
+        }
+
+        .color-history h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-container {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: var(--lighter-blue);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .history-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid white;
+            flex-shrink: 0;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-hex {
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .history-rgb {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+        }
+
+        .color-palette {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--lighter-blue);
+            border-radius: 15px;
+        }
+
+        .color-palette h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .palette-color {
+            height: 60px;
+            border-radius: 8px;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .palette-color:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .palette-tooltip {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 10;
+            display: none;
+        }
+
+        .palette-color:hover .palette-tooltip {
+            display: block;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .upload-section, .results-section {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .format-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .palette-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-section, .results-section {
+                padding: 25px;
+            }
+            
+            .sample-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+            }
+            
+            .color-preview {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .palette-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .upload-section, .results-section {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+            
+            .sample-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .palette-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-indicator .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--lighter-blue);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pixel-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+            display: none;
+        }
+
+        .pixel-marker.active {
+            display: block;
+        }
+
+        .image-stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-eye-dropper"></i> Image Color Picker</h1>
+        <p>Upload an image and click on any pixel to extract its color in HEX, RGB, and HSL formats. Perfect for designers, developers, and creatives.</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="upload-section">
+            <h2><i class="fas fa-upload"></i> Upload Image</h2>
+            
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <h3>Drop your image here</h3>
+                        <p>or click to browse files</p>
+                        <button class="upload-button" id="uploadButton">
+                            <i class="fas fa-folder-open"></i> Choose Image
+                        </button>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+                
+                <div class="image-preview-container" id="previewContainer">
+                    <div class="cursor-info" id="cursorInfo">Click on the image to pick a color</div>
+                    <div class="zoom-container" id="zoomContainer">
+                        <canvas class="zoom-canvas" id="zoomCanvas" width="120" height="120"></canvas>
+                    </div>
+                    <div class="pixel-marker" id="pixelMarker"></div>
+                    <img class="image-preview" id="imagePreview" src="#" alt="Image preview">
+                    <div class="image-stats">
+                        <span id="imageSize">Size: --</span>
+                        <span id="imageDimensions">Dimensions: --</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <h3><i class="fas fa-sliders-h"></i> Controls</h3>
+                <div class="action-buttons">
+                    <button class="action-button primary" id="pickButton">
+                        <i class="fas fa-eye-dropper"></i> Pick Color
+                    </button>
+                    <button class="action-button secondary" id="clearButton">
+                        <i class="fas fa-eraser"></i> Clear Image
+                    </button>
+                    <button class="action-button success" id="sampleButton">
+                        <i class="fas fa-palette"></i> Auto Palette
+                    </button>
+                </div>
+            </div>
+            
+            <div class="sample-images">
+                <h4><i class="fas fa-images"></i> Sample Images</h4>
+                <p style="color: var(--dark-gray); font-size: 0.95rem; margin-bottom: 15px;">Try these sample images to test the color picker:</p>
+                <div class="sample-grid">
+                    <div class="sample-image" data-sample="nature">
+                        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Nature">
+                    </div>
+                    <div class="sample-image" data-sample="abstract">
+                        <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Abstract">
+                    </div>
+                    <div class="sample-image" data-sample="urban">
+                        <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Urban">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Processing image...</p>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2><i class="fas fa-palette"></i> Color Results</h2>
+            
+            <div class="color-preview-container">
+                <div class="color-preview" id="colorPreview" style="background-color: #0066ff;"></div>
+                <div class="color-info">
+                    <div class="color-name" id="colorName">Primary Blue</div>
+                    <div class="color-coordinates" id="colorCoordinates">Click on image to pick a color</div>
+                </div>
+            </div>
+            
+            <div class="color-formats">
+                <h3><i class="fas fa-code"></i> Color Formats</h3>
+                <div class="format-grid">
+                    <div class="format-card hex">
+                        <div class="format-label">
+                            <i class="fas fa-hashtag"></i>
+                            <span>HEX Color</span>
+                        </div>
+                        <div class="format-value" id="hexValue">#0066FF</div>
+                        <button class="copy-button" data-format="hex">
+                            <i class="far fa-copy"></i> Copy HEX
+                        </button>
+                    </div>
+                    
+                    <div class="format-card rgb">
+                        <div class="format-label">
+                            <i class="fas fa-r"></i>
+                            <span>RGB Color</span>
+                        </div>
+                        <div class="format-value" id="rgbValue">rgb(0, 102, 255)</div>
+                        <button class="copy-button" data-format="rgb">
+                            <i class="far fa-copy"></i> Copy RGB
+                        </button>
+                    </div>
+                    
+                    <div class="format-card hsl">
+                        <div class="format-label">
+                            <i class="fas fa-h"></i>
+                            <span>HSL Color</span>
+                        </div>
+                        <div class="format-value" id="hslValue">hsl(216, 100%, 50%)</div>
+                        <button class="copy-button" data-format="hsl">
+                            <i class="far fa-copy"></i> Copy HSL
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="color-history">
+                <h3><i class="fas fa-history"></i> Color History</h3>
+                <div class="history-container" id="historyContainer">
+                    <div class="history-item">
+                        <div class="history-color" style="background-color: #0066ff;"></div>
+                        <div class="history-info">
+                            <div class="history-hex">#0066FF</div>
+                            <div class="history-rgb">RGB(0, 102, 255)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="color-palette">
+                <h3><i class="fas fa-th-large"></i> Color Palette</h3>
+                <p style="color: var(--dark-gray); font-size: 0.95rem; margin-bottom: 15px;">Click on any color to select it:</p>
+                <div class="palette-grid" id="paletteGrid">
+                    <!-- Palette colors will be generated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><i class="fas fa-eye-dropper"></i> Image Color Picker Tool - Part of QuickPDFTool | © 2023 All Rights Reserved</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">All image processing happens locally in your browser. Your images are never sent to any server.</p>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Color copied to clipboard!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const cursorInfo = document.getElementById('cursorInfo');
+        const zoomContainer = document.getElementById('zoomContainer');
+        const zoomCanvas = document.getElementById('zoomCanvas');
+        const pixelMarker = document.getElementById('pixelMarker');
+        const imageSize = document.getElementById('imageSize');
+        const imageDimensions = document.getElementById('imageDimensions');
+        
+        // Control buttons
+        const pickButton = document.getElementById('pickButton');
+        const clearButton = document.getElementById('clearButton');
+        const sampleButton = document.getElementById('sampleButton');
+        const sampleImages = document.querySelectorAll('.sample-image');
+        
+        // Results elements
+        const colorPreview = document.getElementById('colorPreview');
+        const colorName = document.getElementById('colorName');
+        const colorCoordinates = document.getElementById('colorCoordinates');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+        const hslValue = document.getElementById('hslValue');
+        const copyButtons = document.querySelectorAll('.copy-button');
+        const historyContainer = document.getElementById('historyContainer');
+        const paletteGrid = document.getElementById('paletteGrid');
+        
+        // Notification and loading
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // State variables
+        let currentImage = null;
+        let isPickingMode = false;
+        let imageCanvas = null;
+        let imageContext = null;
+        let zoomContext = null;
+        let colorHistory = [];
+        let autoPalette = [];
+        
+        // Initialize canvas contexts
+        function initCanvas() {
+            imageCanvas = document.createElement('canvas');
+            imageContext = imageCanvas.getContext('2d', { willReadFrequently: true });
+            zoomContext = zoomCanvas.getContext('2d', { willReadFrequently: true });
+        }
+        
+        // Handle file upload
+        function handleFileUpload(file) {
+            if (!file || !file.type.match('image.*')) {
+                showNotification("Please select a valid image file.");
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                
+                imagePreview.onload = function() {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show preview container
+                    previewContainer.classList.add('active');
+                    cursorInfo.classList.add('active');
+                    
+                    // Update image stats
+                    imageSize.textContent = `Size: ${formatBytes(file.size)}`;
+                    imageDimensions.textContent = `Dimensions: ${imagePreview.naturalWidth} × ${imagePreview.naturalHeight}px`;
+                    
+                    // Initialize picking mode
+                    enablePickingMode();
+                    
+                    // Load image to canvas for pixel reading
+                    loadImageToCanvas();
+                    
+                    // Generate auto palette
+                    generateAutoPalette();
+                    
+                    showNotification("Image loaded successfully! Click on the image to pick colors.");
+                };
+                
+                imagePreview.onerror = function() {
+                    loadingIndicator.style.display = 'none';
+                    showNotification("Error loading image. Please try another file.");
+                };
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // Load image to canvas
+        function loadImageToCanvas() {
+            imageCanvas.width = imagePreview.naturalWidth;
+            imageCanvas.height = imagePreview.naturalHeight;
+            imageContext.drawImage(imagePreview, 0, 0);
+        }
+        
+        // Enable color picking mode
+        function enablePickingMode() {
+            isPickingMode = true;
+            pickButton.innerHTML = '<i class="fas fa-eye-dropper"></i> Picking Mode Active';
+            pickButton.classList.add('success');
+            cursorInfo.textContent = "Click on the image to pick a color";
+        }
+        
+        // Disable color picking mode
+        function disablePickingMode() {
+            isPickingMode = false;
+            pickButton.innerHTML = '<i class="fas fa-eye-dropper"></i> Pick Color';
+            pickButton.classList.remove('success');
+            cursorInfo.textContent = "Click on the image to pick a color";
+        }
+        
+        // Get pixel color at coordinates
+        function getPixelColor(x, y) {
+            if (!imageContext) return null;
+            
+            // Get image data
+            const pixel = imageContext.getImageData(x, y, 1, 1);
+            const data = pixel.data;
+            
+            // Extract RGB values
+            const r = data[0];
+            const g = data[1];
+            const b = data[2];
+            
+            return { r, g, b };
+        }
+        
+        // Convert RGB to HEX
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+        
+        // Convert RGB to HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+            
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+        
+        // Generate color name from hex
+        function getColorName(hex) {
+            // Simple color name mapping
+            const colorMap = {
+                '#000000': 'Black',
+                '#FFFFFF': 'White',
+                '#FF0000': 'Red',
+                '#00FF00': 'Green',
+                '#0000FF': 'Blue',
+                '#FFFF00': 'Yellow',
+                '#FF00FF': 'Magenta',
+                '#00FFFF': 'Cyan',
+                '#FFA500': 'Orange',
+                '#800080': 'Purple',
+                '#A52A2A': 'Brown',
+                '#808080': 'Gray',
+                '#FFC0CB': 'Pink',
+                '#0066FF': 'Primary Blue',
+                '#4D94FF': 'Light Blue',
+                '#10B981': 'Success Green',
+                '#F59E0B': 'Warning Orange',
+                '#8B5CF6': 'Purple'
+            };
+            
+            return colorMap[hex] || `Color ${hex}`;
+        }
+        
+        // Update color display
+        function updateColorDisplay(r, g, b, x, y) {
+            // Convert to different formats
+            const hex = rgbToHex(r, g, b);
+            const hsl = rgbToHsl(r, g, b);
+            
+            // Update preview
+            colorPreview.style.backgroundColor = hex;
+            
+            // Update color name and coordinates
+            colorName.textContent = getColorName(hex);
+            colorCoordinates.textContent = `Pixel: ${x}, ${y} | RGB: ${r}, ${g}, ${b}`;
+            
+            // Update format values
+            hexValue.textContent = hex;
+            rgbValue.textContent = `rgb(${r}, ${g}, ${b})`;
+            hslValue.textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            
+            // Add to history
+            addToHistory(hex, r, g, b);
+            
+            return { hex, rgb: `rgb(${r}, ${g}, ${b})`, hsl: `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)` };
+        }
+        
+        // Add color to history
+        function addToHistory(hex, r, g, b) {
+            const colorItem = {
+                hex,
+                rgb: `rgb(${r}, ${g}, ${b})`,
+                timestamp: new Date()
+            };
+            
+            // Add to beginning of array
+            colorHistory.unshift(colorItem);
+            
+            // Keep only last 10 items
+            if (colorHistory.length > 10) {
+                colorHistory.pop();
+            }
+            
+            updateHistoryDisplay();
+        }
+        
+        // Update history display
+        function updateHistoryDisplay() {
+            historyContainer.innerHTML = '';
+            
+            if (colorHistory.length === 0) {
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--dark-gray);">
+                        <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No color history yet. Pick colors from an image to see them here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            colorHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-color" style="background-color: ${item.hex};"></div>
+                    <div class="history-info">
+                        <div class="history-hex">${item.hex}</div>
+                        <div class="history-rgb">${item.rgb}</div>
+                    </div>
+                `;
+                
+                // Click to select this color
+                historyItem.addEventListener('click', () => {
+                    // Extract RGB from the item
+                    const rgbMatch = item.rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                    if (rgbMatch) {
+                        const r = parseInt(rgbMatch[1]);
+                        const g = parseInt(rgbMatch[2]);
+                        const b = parseInt(rgbMatch[3]);
+                        
+                        // Update display with these values
+                        updateColorDisplay(r, g, b, 'History', 'Selection');
+                        showNotification(`Color ${item.hex} selected from history`);
+                    }
+                });
+                
+                historyContainer.appendChild(historyItem);
+            });
+        }
+        
+        // Generate auto palette from image
+        function generateAutoPalette() {
+            if (!imageContext) return;
+            
+            autoPalette = [];
+            
+            // Sample colors from different parts of the image
+            const width = imageCanvas.width;
+            const height = imageCanvas.height;
+            
+            // Sample 15 points from the image
+            const samplePoints = [
+                { x: Math.floor(width * 0.1), y: Math.floor(height * 0.1) },
+                { x: Math.floor(width * 0.3), y: Math.floor(height * 0.1) },
+                { x: Math.floor(width * 0.5), y: Math.floor(height * 0.1) },
+                { x: Math.floor(width * 0.7), y: Math.floor(height * 0.1) },
+                { x: Math.floor(width * 0.9), y: Math.floor(height * 0.1) },
+                { x: Math.floor(width * 0.1), y: Math.floor(height * 0.3) },
+                { x: Math.floor(width * 0.3), y: Math.floor(height * 0.3) },
+                { x: Math.floor(width * 0.5), y: Math.floor(height * 0.3) },
+                { x: Math.floor(width * 0.7), y: Math.floor(height * 0.3) },
+                { x: Math.floor(width * 0.9), y: Math.floor(height * 0.3) },
+                { x: Math.floor(width * 0.1), y: Math.floor(height * 0.5) },
+                { x: Math.floor(width * 0.3), y: Math.floor(height * 0.5) },
+                { x: Math.floor(width * 0.5), y: Math.floor(height * 0.5) },
+                { x: Math.floor(width * 0.7), y: Math.floor(height * 0.5) },
+                { x: Math.floor(width * 0.9), y: Math.floor(height * 0.5) }
+            ];
+            
+            // Get colors from sample points
+            samplePoints.forEach(point => {
+                const color = getPixelColor(point.x, point.y);
+                if (color) {
+                    const hex = rgbToHex(color.r, color.g, color.b);
+                    autoPalette.push({
+                        hex,
+                        rgb: `rgb(${color.r}, ${color.g}, ${color.b})`,
+                        r: color.r,
+                        g: color.g,
+                        b: color.b
+                    });
+                }
+            });
+            
+            // Remove duplicates
+            autoPalette = autoPalette.filter((color, index, self) =>
+                index === self.findIndex(c => c.hex === color.hex)
+            );
+            
+            // Update palette display
+            updatePaletteDisplay();
+        }
+        
+        // Update palette display
+        function updatePaletteDisplay() {
+            paletteGrid.innerHTML = '';
+            
+            // Show up to 15 colors in palette
+            const colorsToShow = autoPalette.slice(0, 15);
+            
+            colorsToShow.forEach(color => {
+                const paletteColor = document.createElement('div');
+                paletteColor.className = 'palette-color';
+                paletteColor.style.backgroundColor = color.hex;
+                paletteColor.innerHTML = `<div class="palette-tooltip">${color.hex}</div>`;
+                
+                // Click to select this color
+                paletteColor.addEventListener('click', () => {
+                    updateColorDisplay(color.r, color.g, color.b, 'Palette', 'Selection');
+                    showNotification(`Color ${color.hex} selected from palette`);
+                });
+                
+                paletteGrid.appendChild(paletteColor);
+            });
+        }
+        
+        // Show zoom at mouse position
+        function showZoom(x, y, mouseX, mouseY) {
+            if (!imageContext) return;
+            
+            const zoomSize = 60; // Half of zoom container size
+            const zoomScale = 4; // Zoom factor
+            
+            // Calculate zoom area
+            const sx = Math.max(0, x - zoomSize / zoomScale);
+            const sy = Math.max(0, y - zoomSize / zoomScale);
+            const sWidth = Math.min(imageCanvas.width - sx, zoomSize * 2 / zoomScale);
+            const sHeight = Math.min(imageCanvas.height - sy, zoomSize * 2 / zoomScale);
+            
+            // Clear zoom canvas
+            zoomContext.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+            
+            // Draw zoomed image
+            zoomContext.imageSmoothingEnabled = false;
+            zoomContext.drawImage(
+                imageCanvas,
+                sx, sy, sWidth, sHeight,
+                0, 0, zoomCanvas.width, zoomCanvas.height
+            );
+            
+            // Draw crosshair in center
+            zoomContext.strokeStyle = 'white';
+            zoomContext.lineWidth = 2;
+            zoomContext.beginPath();
+            zoomContext.moveTo(zoomCanvas.width / 2, 0);
+            zoomContext.lineTo(zoomCanvas.width / 2, zoomCanvas.height);
+            zoomContext.moveTo(0, zoomCanvas.height / 2);
+            zoomContext.lineTo(zoomCanvas.width, zoomCanvas.height / 2);
+            zoomContext.stroke();
+            
+            // Position zoom container
+            zoomContainer.style.left = `${mouseX + 20}px`;
+            zoomContainer.style.top = `${mouseY + 20}px`;
+            zoomContainer.classList.add('active');
+        }
+        
+        // Format bytes to readable size
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Copy color to clipboard
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification("Color copied to clipboard!");
+                return true;
+            } catch (err) {
+                showNotification("Failed to copy. Please try again.");
+                console.error('Failed to copy: ', err);
+                return false;
+            }
+        }
+        
+        // Clear image and reset
+        function clearImage() {
+            // Reset file input
+            fileInput.value = '';
+            
+            // Hide preview container
+            previewContainer.classList.remove('active');
+            cursorInfo.classList.remove('active');
+            zoomContainer.classList.remove('active');
+            pixelMarker.classList.remove('active');
+            
+            // Reset image preview
+            imagePreview.src = '#';
+            
+            // Reset image stats
+            imageSize.textContent = 'Size: --';
+            imageDimensions.textContent = 'Dimensions: --';
+            
+            // Reset color display to default
+            colorPreview.style.backgroundColor = '#0066ff';
+            colorName.textContent = 'Primary Blue';
+            colorCoordinates.textContent = 'Click on image to pick a color';
+            hexValue.textContent = '#0066FF';
+            rgbValue.textContent = 'rgb(0, 102, 255)';
+            hslValue.textContent = 'hsl(216, 100%, 50%)';
+            
+            // Disable picking mode
+            disablePickingMode();
+            
+            // Clear history and palette
+            colorHistory = [];
+            autoPalette = [];
+            updateHistoryDisplay();
+            paletteGrid.innerHTML = '';
+            
+            showNotification("Image cleared. Upload a new image to continue.");
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize event listeners
+        function initColorPicker() {
+            // Initialize canvas
+            initCanvas();
+            
+            // Upload button click
+            uploadButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFileUpload(file);
+                }
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    handleFileUpload(file);
+                }
+            });
+            
+            // Image click for color picking
+            imagePreview.addEventListener('click', (e) => {
+                if (!isPickingMode || !imageContext) return;
+                
+                const rect = imagePreview.getBoundingClientRect();
+                const scaleX = imagePreview.naturalWidth / rect.width;
+                const scaleY = imagePreview.naturalHeight / rect.height;
+                
+                // Calculate actual image coordinates
+                const x = Math.floor((e.clientX - rect.left) * scaleX);
+                const y = Math.floor((e.clientY - rect.top) * scaleY);
+                
+                // Ensure coordinates are within image bounds
+                if (x < 0 || x >= imagePreview.naturalWidth || y < 0 || y >= imagePreview.naturalHeight) {
+                    return;
+                }
+                
+                // Get pixel color
+                const color = getPixelColor(x, y);
+                if (color) {
+                    updateColorDisplay(color.r, color.g, color.b, x, y);
+                    showNotification(`Color picked from pixel ${x}, ${y}`);
+                }
+            });
+            
+            // Mouse move for zoom and cursor
+            imagePreview.addEventListener('mousemove', (e) => {
+                if (!isPickingMode || !imageContext) return;
+                
+                const rect = imagePreview.getBoundingClientRect();
+                const scaleX = imagePreview.naturalWidth / rect.width;
+                const scaleY = imagePreview.naturalHeight / rect.height;
+                
+                // Calculate actual image coordinates
+                const x = Math.floor((e.clientX - rect.left) * scaleX);
+                const y = Math.floor((e.clientY - rect.top) * scaleY);
+                
+                // Ensure coordinates are within image bounds
+                if (x < 0 || x >= imagePreview.naturalWidth || y < 0 || y >= imagePreview.naturalHeight) {
+                    zoomContainer.classList.remove('active');
+                    pixelMarker.classList.remove('active');
+                    return;
+                }
+                
+                // Update cursor info
+                cursorInfo.textContent = `X: ${x}, Y: ${y} - Click to pick color`;
+                
+                // Show zoom
+                showZoom(x, y, e.clientX, e.clientY);
+                
+                // Update pixel marker position
+                const markerX = (x / scaleX) - 10; // Center the marker
+                const markerY = (y / scaleY) - 10;
+                pixelMarker.style.left = `${markerX}px`;
+                pixelMarker.style.top = `${markerY}px`;
+                pixelMarker.classList.add('active');
+                
+                // Get pixel color for marker border
+                const color = getPixelColor(x, y);
+                if (color) {
+                    // Invert color for marker border
+                    const invertedColor = rgbToHex(255 - color.r, 255 - color.g, 255 - color.b);
+                    pixelMarker.style.borderColor = invertedColor;
+                }
+            });
+            
+            imagePreview.addEventListener('mouseleave', () => {
+                zoomContainer.classList.remove('active');
+                pixelMarker.classList.remove('active');
+                cursorInfo.textContent = "Click on the image to pick a color";
+            });
+            
+            // Pick button
+            pickButton.addEventListener('click', () => {
+                if (previewContainer.classList.contains('active')) {
+                    if (isPickingMode) {
+                        disablePickingMode();
+                    } else {
+                        enablePickingMode();
+                    }
+                } else {
+                    showNotification("Please upload an image first.");
+                }
+            });
+            
+            // Clear button
+            clearButton.addEventListener('click', clearImage);
+            
+            // Sample palette button
+            sampleButton.addEventListener('click', () => {
+                if (previewContainer.classList.contains('active')) {
+                    generateAutoPalette();
+                    showNotification("Auto palette generated from image!");
+                } else {
+                    showNotification("Please upload an image first.");
+                }
+            });
+            
+            // Sample images
+            sampleImages.forEach(sample => {
+                sample.addEventListener('click', () => {
+                    const sampleType = sample.getAttribute('data-sample');
+                    let imageUrl = '';
+                    
+                    switch(sampleType) {
+                        case 'nature':
+                            imageUrl = 'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
+                            break;
+                        case 'abstract':
+                            imageUrl = 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
+                            break;
+                        case 'urban':
+                            imageUrl = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
+                            break;
+                    }
+                    
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+                    
+                    // Load sample image
+                    imagePreview.src = imageUrl;
+                    
+                    imagePreview.onload = function() {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        
+                        // Show preview container
+                        previewContainer.classList.add('active');
+                        cursorInfo.classList.add('active');
+                        
+                        // Update image stats (approximate)
+                        imageSize.textContent = 'Size: Sample Image';
+                        imageDimensions.textContent = `Dimensions: ${imagePreview.naturalWidth} × ${imagePreview.naturalHeight}px`;
+                        
+                        // Initialize picking mode
+                        enablePickingMode();
+                        
+                        // Load image to canvas
+                        loadImageToCanvas();
+                        
+                        // Generate auto palette
+                        generateAutoPalette();
+                        
+                        showNotification("Sample image loaded! Click on the image to pick colors.");
+                    };
+                    
+                    imagePreview.onerror = function() {
+                        loadingIndicator.style.display = 'none';
+                        showNotification("Error loading sample image. Please try another.");
+                    };
+                });
+            });
+            
+            // Copy buttons
+            copyButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const format = button.getAttribute('data-format');
+                    let textToCopy = '';
+                    
+                    switch(format) {
+                        case 'hex':
+                            textToCopy = hexValue.textContent;
+                            break;
+                        case 'rgb':
+                            textToCopy = rgbValue.textContent;
+                            break;
+                        case 'hsl':
+                            textToCopy = hslValue.textContent;
+                            break;
+                    }
+                    
+                    const success = await copyToClipboard(textToCopy);
+                    
+                    if (success) {
+                        // Visual feedback
+                        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        button.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="far fa-copy"></i> Copy ' + format.toUpperCase();
+                            button.classList.remove('copied');
+                        }, 2000);
+                    }
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Space to toggle picking mode
+                if (e.code === 'Space' && previewContainer.classList.contains('active')) {
+                    e.preventDefault();
+                    if (isPickingMode) {
+                        disablePickingMode();
+                    } else {
+                        enablePickingMode();
+                    }
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearImage();
+                }
+                
+                // C to copy HEX
+                if (e.key === 'c' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    if (hexValue.textContent) {
+                        copyToClipboard(hexValue.textContent);
+                    }
+                }
+            });
+        }
+        
+        // Initialize color picker when page loads
+        document.addEventListener('DOMContentLoaded', initColorPicker);
+    </script>
+</body>
+</html>
